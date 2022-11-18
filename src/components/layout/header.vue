@@ -62,20 +62,18 @@ export default {
 
 <style lang="scss">
 .origin_color {
-  background-color: transparent;
+  background: $main-transparent;
 }
 
 .change_color {
   background: rgb(2, 0, 36);
-  background: linear-gradient(
-    180deg,
-    rgba(0, 0, 0, 1) 0%,
-    rgba(255, 255, 255, 0) 100%
-  );
+  background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, $main 100%);
 }
 #header {
-  padding: 3vh;
-  position: sticky;
+  width: 100%;
+  height: 8vh;
+  padding: 0 2vh;
+  position: fixed;
   top: 0vh;
   transition: background-color 0.5s;
 
@@ -83,7 +81,13 @@ export default {
   grid-template-columns: 1fr 10fr;
 
   font-size: 20px;
+  line-height: 8vh;
   text-align: center;
+  z-index: 100;
+}
+#header:hover {
+  transition: background-color 0.5s;
+  background: $main;
 }
 
 #nav {
@@ -102,7 +106,7 @@ li {
 }
 #profile-content {
   padding: 0;
-  margin-top: 6vh;
+  margin-top: 8vh;
   right: 0;
   width: 150px;
   position: absolute;

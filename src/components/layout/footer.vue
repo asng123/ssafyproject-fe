@@ -25,7 +25,6 @@ export default {
 #footer {
   width: 100%;
   padding: 3vh;
-  position: fixed;
   bottom: 0;
 
   background: $main-back;

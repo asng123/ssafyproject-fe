@@ -1,13 +1,10 @@
 <template>
-  <v-app>
+  <div id="app">
     <header-section></header-section>
 
-    <v-container class="mt-16 section">
-      <router-view></router-view>
-    </v-container>
-
+    <router-view></router-view>
     <footer-section></footer-section>
-  </v-app>
+  </div>
 </template>
 
 <script>
@@ -22,4 +19,9 @@ export default {
 };
 </script>
 
-<style lang="scss"></style>
+<style lang="scss">
+#id {
+  margin: 0;
+  padding: 0;
+}
+</style>
