@@ -3,7 +3,7 @@
     id="header"
     :class="{ origin_color: scrollPos < 100, change_color: scrollPos > 100 }"
   >
-    <div id="logo">내집</div>
+    <div id="logo"><a href="/">내집</a></div>
     <div id="nav">
       <div id="left">
         <ul>
@@ -14,17 +14,16 @@
       <div id="right">
         <ul>
           <li><font-awesome-icon icon="fa-solid fa-bell" /></li>
-          <!--v-if="userInfo"-->
           <!-- after login-->
-          <li id="profile" @click="dropdown">
+          <li id="profile" @click="dropdown" v-if="userInfo">
             <font-awesome-icon icon="fa-solid fa-user" />
           </li>
+          <li v-else><a href="/user/login">로그인</a></li>
           <ul id="profile-content" v-show="isDropOpen">
             <li>로그아웃</li>
             <li>내 정보</li>
           </ul>
           <!-- before login-->
-          <!-- <li v-else>로그인</li> -->
         </ul>
       </div>
     </div>
@@ -62,7 +61,8 @@ export default {
 
 <style lang="scss">
 .origin_color {
-  background: $main-transparent;
+  background: #000000d4;
+  color: $main;
 }
 
 .change_color {
@@ -85,9 +85,12 @@ export default {
   text-align: center;
   z-index: 100;
 }
+#header a {
+  color: $main;
+}
 #header:hover {
   transition: background-color 0.5s;
-  background: $main;
+  background: black;
 }
 
 #nav {

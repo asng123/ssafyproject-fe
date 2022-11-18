@@ -29,6 +29,7 @@ export default {
 
   background: $main-back;
   color: white;
+  position: fixed;
 }
 #nav {
   width: 100%;
