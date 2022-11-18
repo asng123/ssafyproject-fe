@@ -8,7 +8,10 @@
           autocomplete="off"
         ></b-form-input>
         <button type="submit" id="submit_btn">
-          <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
+          <font-awesome-icon
+            id="submit_btn_icon"
+            icon="fa-solid fa-magnifying-glass"
+          />
         </button>
       </form>
     </div>
@@ -103,7 +106,7 @@ export default {
     top: 50vh;
   }
   to {
-    top: 10vh;
+    top: 12vh;
   }
 }
 .intro {
@@ -113,7 +116,7 @@ export default {
   background-image: url("https://images.unsplash.com/photo-1486325212027-8081e485255e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
 }
 .focus {
-  top: 10vh;
+  top: 12vh;
   animation: searchUp 2s;
 }
 #search_bar {
@@ -138,8 +141,11 @@ export default {
 #search_bar form #submit_btn {
   width: 20%;
   border-style: none;
-  background: $main;
+  background: black;
   border-radius: 0 10px 10px 0;
+}
+#search_bar form #submit_btn #submit_btn_icon {
+  color: $main;
 }
 #map_div {
   width: 100%;

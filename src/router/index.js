@@ -11,20 +11,17 @@ const routes = [
     component: HomeView,
   },
   {
-    path: '/board',
-    name: 'Board',
-    component: () => import("@/views/BoardList.vue"),
+    path: "/user",
+    name: "User",
+    component: () => import("@/views/User"),
+    children: [
+      {
+        path: "login",
+        name: "Login",
+        component: () => import("@/components/users/UserLogin"),
+      },
+    ],
   },
-  {
-    path: '/login',
-    name: 'Login',
-    component: () => import("@/views/UserLogin.vue"),
-  },
-  {
-    path: '/regist',
-    name: 'Regist',
-    component: () => import("@/views/UserRegist.vue"),
-  }
 ];
 
 const router = new VueRouter({
