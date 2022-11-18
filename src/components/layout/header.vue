@@ -13,8 +13,18 @@
       </div>
       <div id="right">
         <ul>
-          <li>알림</li>
-          <li>프로필</li>
+          <li><font-awesome-icon icon="fa-solid fa-bell" /></li>
+          <!--v-if="userInfo"-->
+          <!-- after login-->
+          <li id="profile" @click="dropdown">
+            <font-awesome-icon icon="fa-solid fa-user" />
+          </li>
+          <ul id="profile-content" v-show="isDropOpen">
+            <li>로그아웃</li>
+            <li>내 정보</li>
+          </ul>
+          <!-- before login-->
+          <!-- <li v-else>로그인</li> -->
         </ul>
       </div>
     </div>
@@ -22,11 +32,14 @@
 </template>
 
 <script>
+import { mapState, mapGetters, mapActions } from "vuex";
+const memberStore = "memberStore";
 export default {
   name: "Header",
   data() {
     return {
       scrollPos: null,
+      isDropOpen: false,
     };
   },
   created() {
@@ -36,6 +49,13 @@ export default {
     updateScroll() {
       this.scrollPos = window.scrollY;
     },
+    dropdown() {
+      this.isDropOpen = !this.isDropOpen;
+      console.log("drop", this.isDropOpen);
+    },
+  },
+  computed: {
+    ...mapState(memberStore, ["isLogin", "userInfo"]),
   },
 };
 </script>
@@ -63,6 +83,7 @@ export default {
   grid-template-columns: 1fr 10fr;
 
   font-size: 20px;
+  text-align: center;
 }
 
 #nav {
@@ -70,15 +91,21 @@ export default {
   display: flex;
   justify-content: space-between;
 }
-#nav #left > ul {
-  display: flex;
-  gap: 30px;
-}
-#nav #right > ul {
-  display: flex;
-  gap: 30px;
-}
 li {
   list-style: none;
+}
+#profile {
+  float: left;
+  position: relative;
+  z-index: 1;
+  cursor: pointer;
+}
+#profile-content {
+  padding: 0;
+  margin-top: 6vh;
+  right: 0;
+  width: 150px;
+  position: absolute;
+  border: 0.5px solid #00000050;
 }
 </style>
