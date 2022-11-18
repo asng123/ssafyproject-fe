@@ -1,190 +1,152 @@
 <template>
-  <div>
-    <div>
-      <v-card to="detail">
-        <v-img
-            :aspect-ratio="16 / 9"
-            dark
-            gradient="to top, rgba(25,32,72,.7), rgba(25,32,72,.0)"
-            height="650px"
-            src="https://www.ikld.kr/news/photo/202009/223258_78377_4832.jpg"
-        >
-          <v-card-text class="fill-height d-flex align-end">
-            <v-row class="flex-column">
-              <v-col cols="12" lg="8" md="10" xl="7">
-                <h2 class="text-h3 py-3" style="line-height: 1.2">
-                  Where is my home
-                </h2>
-              </v-col>
-              <v-col class="d-flex align-center">
-              </v-col>
-            </v-row>
-          </v-card-text>
-        </v-img>
-      </v-card>
+  <div id="main" :class="{ usual: isFocus, intro: !isFocus }">
+    <div id="search_bar" :class="{ focus: isFocus === true }">
+      <form action="">
+        <b-form-input
+          id="search"
+          @focus="focused"
+          autocomplete="off"
+        ></b-form-input>
+        <button type="submit" id="submit_btn">
+          <font-awesome-icon icon="fa-solid fa-magnifying-glass" />
+        </button>
+      </form>
     </div>
-
-    <v-row>
-      <v-col cols="12" lg="12" xl="8">
-        <div>
-          <div class="pt-16">
-            <h2 class="text-h4 font-weight-bold pb-4">New Posts</h2>
-
-            <v-row>
-              <v-col v-for="i in 6" :key="i" cols="12" lg="4" md="6">
-                <v-hover
-                    v-slot:default="{ hover }"
-                    close-delay="50"
-                    open-delay="50"
-                >
-                  <div>
-                    <v-card
-                        :color="hover ? 'white' : 'transparent'"
-                        :elevation="hover ? 12 : 0"
-                        flat
-                        hover
-                        to="/detail"
-                    >
-                      <v-img
-                          :aspect-ratio="16 / 9"
-                          class="elevation-2"
-                          gradient="to top, rgba(25,32,72,.4), rgba(25,32,72,.0)"
-                          height="200px"
-                          src="https://cdn.pixabay.com/photo/2020/12/23/14/41/forest-5855196_1280.jpg"
-                          style="border-radius: 16px"
-                      >
-                        <v-card-text>
-                          <v-btn color="accent" to="category">New</v-btn>
-                        </v-card-text>
-                      </v-img>
-
-                      <v-card-text>
-                        <div class="text-h5 font-weight-bold primary--text">
-                          How to write an awesome blog post in 5 steps
-                        </div>
-
-                        <div class="text-body-1 py-4">
-                          Ultrices sagittis orci a scelerisque. Massa placerat
-                          duis ultricies lacus sed turpis
-                        </div>
-
-                        <div class="d-flex align-center">
-                          <v-avatar color="accent" size="36">
-                            <v-icon dark>mdi-feather</v-icon>
-                          </v-avatar>
-
-                          <div class="pl-2">Yan Lee · 22 July 2019</div>
-                        </div>
-                      </v-card-text>
-                    </v-card>
-                  </div>
-                </v-hover>
-              </v-col>
-            </v-row>
-          </div>
-
-          <div class="pt-16">
-            <h2 class="text-h4 font-weight-bold pb-4">Featured</h2>
-
-            <v-row>
-              <v-col v-for="i in 3" :key="i" cols="6" lg="4">
-                <v-card dark flat>
-                  <v-img
-                      :aspect-ratio="16 / 9"
-                      class="elevation-2 fill-height"
-                      gradient="to top, rgba(25,32,72,.4), rgba(25,32,72,.0)"
-                      height="600px"
-                      src="https://cdn.pixabay.com/photo/2019/10/29/14/46/landscape-4587079_1280.jpg"
-                  >
-                    <div
-                        class="d-flex flex-column justify-space-between fill-height"
-                    >
-                      <v-card-text>
-                        <v-btn color="accent">ANIMALS</v-btn>
-                      </v-card-text>
-
-                      <v-card-text>
-                        <div
-                            class="text-h5 py-3 font-weight-bold"
-                            style="line-height: 1.2"
-                        >
-                          15 things I have always wondered about birds
-                        </div>
-
-                        <div class="d-flex align-center">
-                          <v-avatar color="accent" size="36">
-                            <v-icon dark>mdi-feather</v-icon>
-                          </v-avatar>
-
-                          <div class="pl-2">Yan Lee · 03 Jan 2019</div>
-                        </div>
-                      </v-card-text>
-                    </div>
-                  </v-img>
-                </v-card>
-              </v-col>
-            </v-row>
-          </div>
-
-          <div class="pt-16">
-            <h2 class="text-h4 font-weight-bold">Latest Posts</h2>
-
-            <div>
-              <v-row v-for="i in 6" :key="i" class="py-4">
-                <v-col cols="12" md="4">
-                  <v-card flat height="100%">
-                    <v-img
-                        :aspect-ratio="16 / 9"
-                        height="100%"
-                        src="https://cdn.pixabay.com/photo/2021/01/27/06/54/nova-scotia-duck-tolling-retriever-5953883_1280.jpg"
-                    ></v-img>
-                  </v-card>
-                </v-col>
-
-                <v-col>
-                  <div>
-                    <v-btn color="accent" depressed>TRAVEL</v-btn>
-
-                    <h3 class="text-h4 font-weight-bold pt-3">
-                      Ut enim blandit volutpat maecenas volutpat blandit
-                    </h3>
-
-                    <p class="text-h6 font-weight-regular pt-3 text--secondary">
-                      Duis aute irure dolor in reprehenderit in voluptate velit
-                      esse cillum dolore eu fugiat nulla pariatur. Excepteur
-                      sint occaecat cupidatat non proident, sunt in culpa qui
-                      officia deserunt mollit anim id est laborum.
-                    </p>
-
-                    <div class="d-flex align-center">
-                      <v-avatar color="accent" size="36">
-                        <v-icon dark>mdi-feather</v-icon>
-                      </v-avatar>
-
-                      <div class="pl-2">Yan Lee · 03 Jan 2019</div>
-                    </div>
-                  </div>
-                </v-col>
-              </v-row>
-            </div>
-          </div>
-        </div>
-      </v-col>
-
-      <v-col>
-        <div class="pt-16">
-          <siderbar/>
-        </div>
-      </v-col>
-    </v-row>
+    <div id="map_div" v-show="isFocus">
+      <div id="map"></div>
+    </div>
   </div>
 </template>
 
 <script>
+import axios from "axios";
+
 export default {
   name: "Home",
   components: {
+    SearchSection: () => import("@/components/common/searchBar.vue"),
+  },
+  data() {
+    return { isFocus: false, prevRoute: null };
+  },
+  async created() {
+    // ^^
+    // console.log(process.env.VUE_APP_UNSPLASH_KEY);
+    // axios
+    //   .get(
+    //     `https://api.unsplash.com/photos/random/?client_id=${process.env.VUE_APP_UNSPLASH_KEY}`
+    //   )
+    //   .then(({ data }) => {
+    //     // var dom = document.getElementById("main");
+    //     // console.log(data);
+    //     // dom.style.backgroundImage = url(data.links.download);
+    //     this.backgroundImg = data.links.download;
+    //   })
+    //   .catch((e) => {
+    //     console.log(e);
+    //   });
+  },
+  components: {
     siderbar: () => import("@/components/details/sidebar"),
+  },
+  methods: {
+    focused() {
+      this.isFocus = true; // kakao map 초기화
+      console.log(process.env.VUE_APP_KAKAO_MAP_KEY);
+      this.initMap();
+    },
+    initMap() {
+      if (window.kakao && window.kakao.maps) {
+        this.makeMap();
+      } else {
+        const script = document.createElement("script");
+        script.onload = () => kakao.maps.load(this.initMap);
+        script.src = `http://dapi.kakao.com/v2/maps/sdk.js?autoload=false&appkey=${process.env.VUE_APP_KAKAO_MAP_KEY}`;
+        document.head.appendChild(script);
+      }
+    },
+    makeMap() {
+      console.log(document);
+      const mapContainer = document.querySelector("#map");
+      console.log(mapContainer);
+      const mapOption = {
+        center: new kakao.maps.LatLng(37.56666, 126.978),
+        level: 3,
+      };
+      this.map = new kakao.maps.Map(mapContainer, mapOption);
+    },
+  },
+  mounted() {
+    // console.log(this.prevRoute);
+    // console.log(this.prevRoute.name);
   },
 };
 </script>
+<style lang="scss">
+#main {
+  width: 100%;
+  height: 100vh;
+  overflow: hidden;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  margin: 0;
+
+  display: flex;
+  justify-content: center;
+
+  position: absolute;
+}
+@keyframes searchUp {
+  from {
+    top: 50vh;
+  }
+  to {
+    top: 10vh;
+  }
+}
+.intro {
+  display: flex;
+  align-items: center;
+  margin-top: 0;
+  background-image: url("https://images.unsplash.com/photo-1486325212027-8081e485255e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
+}
+.focus {
+  top: 10vh;
+  animation: searchUp 2s;
+}
+#search_bar {
+  width: 40%;
+  height: 5vh;
+  z-index: 100;
+  position: absolute;
+  overflow-y: auto;
+}
+#search_bar form {
+  display: flex;
+  justify-content: space-between;
+}
+#search_bar form #search {
+  height: 5vh;
+  width: 80%;
+  border-radius: 10px 0 0 10px;
+}
+#search_bar form #search:focus {
+  border: 0;
+}
+#search_bar form #submit_btn {
+  width: 20%;
+  border-style: none;
+  background: $main;
+  border-radius: 0 10px 10px 0;
+}
+#map_div {
+  width: 100%;
+  height: 100%;
+}
+#map_div #map {
+  width: 100%;
+  height: 100%;
+}
+</style>
