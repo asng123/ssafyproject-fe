@@ -1,12 +1,12 @@
 <template>
   <v-app>
-    <AppBar></AppBar>
+    <header-section></header-section>
 
-    <v-container class="mt-16">
+    <v-container class="mt-16 section">
       <router-view></router-view>
     </v-container>
 
-    <Footer></Footer>
+    <footer-section></footer-section>
   </v-app>
 </template>
 
@@ -15,9 +15,11 @@ export default {
   name: "App",
 
   components: {
-    AppBar: () => import("@/components/layout/appbar.vue"),
-    Footer: () => import("@/components/layout/footer.vue"),
+    HeaderSection: () => import("@/components/layout/header.vue"),
+    FooterSection: () => import("@/components/layout/footer.vue"),
   },
   data: () => ({}),
 };
 </script>
+
+<style lang="scss"></style>
