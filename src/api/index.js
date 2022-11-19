@@ -21,5 +21,14 @@ function houseInstance() {
   });
   return instance;
 }
-
-export { apiInstance, houseInstance };
+// map info
+function mapInstance() {
+  const instance = axios.create({
+    baseURL: process.env.VUE_APP_MAP_INFO_URL,
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+    },
+  });
+  return instance;
+}
+export { apiInstance, houseInstance, mapInstance };
