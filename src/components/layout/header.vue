@@ -116,7 +116,10 @@ export default {
   position: sticky;
 =======
   position: fixed;
+<<<<<<< HEAD
 >>>>>>> 268263e ([feat] join)
+=======
+>>>>>>> 1664e03 ([feat] join)
 }
 #header a {
   color: $main;
