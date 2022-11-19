@@ -177,14 +177,6 @@ export default {
           this.finalMessage = "회원가입에 실패했습니다. 문의해주세요.";
         }
       });
-      await this.userConfirm(this.user);
-      let token = sessionStorage.getItem("access-token");
-      console.log("1. confirm() token >> " + token);
-      if (this.isLogin) {
-        await this.getUserInfo(token);
-        console.log("4. confirm() userInfo :: ", this.userInfo);
-        this.$router.push({ name: "home" });
-      }
     },
     movePage() {
       this.$router.push({ name: "Join" });
