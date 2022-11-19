@@ -63,6 +63,11 @@ const routes = [
         name: "memberinfo",
         component: () => import("@/components/users/UserMyPage"),
       },
+      {
+        path: "list",
+        name: "list",
+        component: () => import("@/components/users/UserList"),
+      },
     ],
   },
 ];
