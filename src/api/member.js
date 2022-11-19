@@ -37,4 +37,8 @@ async function userupdate(user, success, fail) {
   await api.put(`/user/`, user).then(success).catch(fail);
 }
 
-export { join, login, idCheck, findById, tokenRegeneration, logout, del, userupdate };
+async function userlist(success, fail) {
+  await api.get(`/user/list`).then(success).catch(fail);
+}
+
+export { join, login, idCheck, findById, tokenRegeneration, logout, del, userupdate, userlist };

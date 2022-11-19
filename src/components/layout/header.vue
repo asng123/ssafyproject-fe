@@ -22,7 +22,8 @@
           <li v-else><a href="/user/login">로그인</a></li>
           <ul id="profile-content" v-show="isDropOpen">
             <li @click.prevent="onClickLogout">로그아웃</li>
-            <li @click.prevent="onClickUserInfo">내 정보</li>
+            <li @click.prevent="onClickAdminpage" v-if="isAdmin">회원관리</li>
+            <li @click.prevent="onClickUserInfo" v-else>내 정보</li>
           </ul>
           <!-- before login-->
         </ul>
@@ -41,9 +42,11 @@ export default {
       scrollPos: null,
       isDropOpen: false,
       isHome: false,
+      isAdmin: false,
     };
   },
   created() {
+    this.isAdmin = this.userInfo.uid === "admin"; 
     window.addEventListener("scroll", this.updateScroll);
     this.isHome = window.location.pathname === "/";
     console.log("w", window.location.pathname);
@@ -76,6 +79,10 @@ export default {
     onClickUserInfo() {
       this.dropdown();
       this.$router.push({ name: "memberinfo" });
+    },
+    onClickAdminpage() {
+      this.dropdown();
+      this.$router.push({ name: "list" });
     },
   },
   computed: {

@@ -19,6 +19,7 @@
         :per-page="perPage"
         :current-page="currentPage"
         :fields="fields" 
+        align="center"
         @row-clicked="viewArticle"
         >
           <template #cell(subject)="data">
@@ -29,11 +30,12 @@
         </b-table>
         <b-pagination
           v-model="currentPage"
+          align="center"
           :total-rows="rows"
           :per-page="perPage"
           aria-controls="tbarticle"
         ></b-pagination>
-        <p class="mt-3">현재페이지: {{ currentPage }}</p>
+        <p class="mt-3" align="center">현재페이지: {{ currentPage }}</p>
       </b-col>
     </b-row>
   </b-container>
