@@ -73,15 +73,15 @@ export default {
     async confirm() {
       await this.userConfirm(this.user);
       let token = sessionStorage.getItem("access-token");
-       console.log("1. confirm() token >> " + token);
+      console.log("1. confirm() token >> " + token);
       if (this.isLogin) {
         await this.getUserInfo(token);
-         console.log("4. confirm() userInfo :: ", this.userInfo);
+        console.log("4. confirm() userInfo :: ", this.userInfo);
         this.$router.push({ name: "home" });
       }
     },
     movePage() {
-      this.$router.push({ name: "join" });
+      this.$router.push({ name: "Join" });
     },
   },
 };

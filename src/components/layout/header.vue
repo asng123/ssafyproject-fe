@@ -1,8 +1,5 @@
 <template>
-  <div
-    id="header"
-    :class="{ origin_color: scrollPos < 100, change_color: scrollPos > 100 }"
-  >
+  <div id="header" :class="{ home_header: isHome }">
     <div id="logo"><a href="/">내집</a></div>
     <div id="nav">
       <div id="left">
@@ -39,10 +36,13 @@ export default {
     return {
       scrollPos: null,
       isDropOpen: false,
+      isHome: false,
     };
   },
   created() {
     window.addEventListener("scroll", this.updateScroll);
+    this.isHome = window.location.pathname === "/";
+    console.log("w", window.location.pathname);
   },
   methods: {
     updateScroll() {
@@ -85,12 +85,11 @@ export default {
   background: rgb(2, 0, 36);
   background: linear-gradient(180deg, rgba(0, 0, 0, 1) 0%, $main 100%);
 }
+
 #header {
   width: 100%;
   height: 8vh;
   padding: 0 2vh;
-  position: fixed;
-  top: 0vh;
   transition: background-color 0.5s;
 
   display: grid;
@@ -100,6 +99,12 @@ export default {
   line-height: 8vh;
   text-align: center;
   z-index: 100;
+  background: #000000d4;
+  color: $main;
+}
+.home_header {
+  position: fixed;
+  top: 0vh;
 }
 #header a {
   color: $main;
