@@ -44,6 +44,7 @@
                 @keyup.enter="confirm"
               ></b-form-input>
             </b-form-group>
+<<<<<<< HEAD
             <b-form-group label="닉네임:" label-for="nickname">
               <b-form-input
                 type="text"
@@ -56,12 +57,21 @@
             </b-form-group>
             <b-form-input
                 type="text"
+=======
+            <b-form-group label="전화번호:" label-for="userPhoneNumber">
+              <b-form-input
+                type="email"
+>>>>>>> 268263e ([feat] join)
                 id="userPhoneNumber"
                 v-model="user.phonenumber"
                 required
                 placeholder="전화번호...."
                 @keyup.enter="confirm"
               ></b-form-input>
+<<<<<<< HEAD
+=======
+            </b-form-group>
+>>>>>>> 268263e ([feat] join)
             <b-form-group label="비밀번호:" label-for="userpwd">
               <b-form-input
                 type="password"
@@ -144,10 +154,13 @@ export default {
         this.finalMessage = "전화번호를 적어주세요.";
         return;
       }
+<<<<<<< HEAD
       if (!this.user.nickname) {
         this.finalMessage = "닉네임을 적어주세요.";
         return;
       }
+=======
+>>>>>>> 268263e ([feat] join)
       if (!this.user.password) {
         this.finalMessage = "비밀번호를 적어주세요.";
         return;
@@ -175,6 +188,17 @@ export default {
           this.finalMessage = "회원가입에 실패했습니다. 문의해주세요.";
         }
       });
+<<<<<<< HEAD
+=======
+      await this.userConfirm(this.user);
+      let token = sessionStorage.getItem("access-token");
+      console.log("1. confirm() token >> " + token);
+      if (this.isLogin) {
+        await this.getUserInfo(token);
+        console.log("4. confirm() userInfo :: ", this.userInfo);
+        this.$router.push({ name: "home" });
+      }
+>>>>>>> 268263e ([feat] join)
     },
     movePage() {
       this.$router.push({ name: "Join" });
