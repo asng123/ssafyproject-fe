@@ -54,8 +54,7 @@
                 @keyup.enter="confirm"
               ></b-form-input>
             </b-form-group>
-            <b-form-group label="전화번호:" label-for="userPhoneNumber">
-              <b-form-input
+            <b-form-input
                 type="text"
                 id="userPhoneNumber"
                 v-model="user.phonenumber"
@@ -63,7 +62,6 @@
                 placeholder="전화번호...."
                 @keyup.enter="confirm"
               ></b-form-input>
-            </b-form-group>
             <b-form-group label="비밀번호:" label-for="userpwd">
               <b-form-input
                 type="password"
