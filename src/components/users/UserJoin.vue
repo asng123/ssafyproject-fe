@@ -46,6 +46,9 @@
             </b-form-group>
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
             <b-form-group label="닉네임:" label-for="nickname">
               <b-form-input
                 type="text"
@@ -56,6 +59,7 @@
                 @keyup.enter="confirm"
               ></b-form-input>
             </b-form-group>
+<<<<<<< HEAD
             <b-form-group label="전화번호:" label-for="userPhoneNumber">
               <b-form-input
                 type="text"
@@ -69,6 +73,11 @@
               <b-form-input
                 type="email"
 >>>>>>> 1664e03 ([feat] join)
+=======
+            <b-form-group label="전화번호:" label-for="userPhoneNumber">
+              <b-form-input
+                type="text"
+>>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
                 id="userPhoneNumber"
                 v-model="user.phonenumber"
                 required
@@ -160,14 +169,20 @@ export default {
       }
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
+=======
+>>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
       if (!this.user.nickname) {
         this.finalMessage = "닉네임을 적어주세요.";
         return;
       }
+<<<<<<< HEAD
 =======
 >>>>>>> 268263e ([feat] join)
 =======
 >>>>>>> 1664e03 ([feat] join)
+=======
+>>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
       if (!this.user.password) {
         this.finalMessage = "비밀번호를 적어주세요.";
         return;
