@@ -44,6 +44,7 @@
                 @keyup.enter="confirm"
               ></b-form-input>
             </b-form-group>
+<<<<<<< HEAD
             <b-form-group label="닉네임:" label-for="nickname">
               <b-form-input
                 type="text"
@@ -57,6 +58,11 @@
             <b-form-group label="전화번호:" label-for="userPhoneNumber">
               <b-form-input
                 type="text"
+=======
+            <b-form-group label="전화번호:" label-for="userPhoneNumber">
+              <b-form-input
+                type="email"
+>>>>>>> 1664e03 ([feat] join)
                 id="userPhoneNumber"
                 v-model="user.phonenumber"
                 required
@@ -146,10 +152,13 @@ export default {
         this.finalMessage = "전화번호를 적어주세요.";
         return;
       }
+<<<<<<< HEAD
       if (!this.user.nickname) {
         this.finalMessage = "닉네임을 적어주세요.";
         return;
       }
+=======
+>>>>>>> 1664e03 ([feat] join)
       if (!this.user.password) {
         this.finalMessage = "비밀번호를 적어주세요.";
         return;
