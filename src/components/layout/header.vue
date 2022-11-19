@@ -122,6 +122,7 @@ export default {
   position: fixed;
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 >>>>>>> 268263e ([feat] join)
 =======
 >>>>>>> 1664e03 ([feat] join)
@@ -130,6 +131,8 @@ export default {
 >>>>>>> 9acf518 ([feat] join 완성)
 =======
 >>>>>>> 268263e ([feat] join)
+=======
+>>>>>>> 1664e03 ([feat] join)
 }
 #header a {
   color: $main;
