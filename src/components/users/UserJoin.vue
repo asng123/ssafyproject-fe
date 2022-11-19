@@ -44,11 +44,6 @@
                 @keyup.enter="confirm"
               ></b-form-input>
             </b-form-group>
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
             <b-form-group label="닉네임:" label-for="nickname">
               <b-form-input
                 type="text"
@@ -59,25 +54,9 @@
                 @keyup.enter="confirm"
               ></b-form-input>
             </b-form-group>
-<<<<<<< HEAD
             <b-form-group label="전화번호:" label-for="userPhoneNumber">
               <b-form-input
                 type="text"
-=======
-            <b-form-group label="전화번호:" label-for="userPhoneNumber">
-              <b-form-input
-                type="email"
->>>>>>> 268263e ([feat] join)
-=======
-            <b-form-group label="전화번호:" label-for="userPhoneNumber">
-              <b-form-input
-                type="email"
->>>>>>> 1664e03 ([feat] join)
-=======
-            <b-form-group label="전화번호:" label-for="userPhoneNumber">
-              <b-form-input
-                type="text"
->>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
                 id="userPhoneNumber"
                 v-model="user.phonenumber"
                 required
@@ -167,22 +146,10 @@ export default {
         this.finalMessage = "전화번호를 적어주세요.";
         return;
       }
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
->>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
       if (!this.user.nickname) {
         this.finalMessage = "닉네임을 적어주세요.";
         return;
       }
-<<<<<<< HEAD
-=======
->>>>>>> 268263e ([feat] join)
-=======
->>>>>>> 1664e03 ([feat] join)
-=======
->>>>>>> df3f26d ([add] admin 공지사항 기능 추가)
       if (!this.user.password) {
         this.finalMessage = "비밀번호를 적어주세요.";
         return;
@@ -210,12 +177,6 @@ export default {
           this.finalMessage = "회원가입에 실패했습니다. 문의해주세요.";
         }
       });
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
-=======
-=======
->>>>>>> 1664e03 ([feat] join)
       await this.userConfirm(this.user);
       let token = sessionStorage.getItem("access-token");
       console.log("1. confirm() token >> " + token);
@@ -224,12 +185,6 @@ export default {
         console.log("4. confirm() userInfo :: ", this.userInfo);
         this.$router.push({ name: "home" });
       }
-<<<<<<< HEAD
->>>>>>> 268263e ([feat] join)
-=======
->>>>>>> 1664e03 ([feat] join)
-=======
->>>>>>> 9acf518 ([feat] join 완성)
     },
     movePage() {
       this.$router.push({ name: "Join" });
