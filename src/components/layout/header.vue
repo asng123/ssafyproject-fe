@@ -71,6 +71,7 @@ export default {
       sessionStorage.removeItem("refresh-token"); //저장된 토큰 없애기
       if (this.$route.path != "/") this.$router.push({ name: "main" });
       this.dropdown();
+      this.$router.push({ name: "home" });
     },
   },
   computed: {
@@ -107,7 +108,7 @@ export default {
   color: $main;
 }
 .home_header {
-  position: fixed;
+  position: sticky;
 }
 #header a {
   color: $main;
