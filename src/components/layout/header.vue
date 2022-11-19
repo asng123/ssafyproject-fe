@@ -112,7 +112,11 @@ export default {
   color: $main;
 }
 .home_header {
+<<<<<<< HEAD
   position: sticky;
+=======
+  position: fixed;
+>>>>>>> 268263e ([feat] join)
 }
 #header a {
   color: $main;
