@@ -6,7 +6,7 @@
       </b-col>
     </b-row>
     <b-row class="mb-1">
-      <b-col class="text-right">
+      <b-col class="text-right" v-if="userInfo.uid === `admin`">
         <b-button variant="outline-primary" @click="moveWrite()">글쓰기</b-button>
       </b-col>
     </b-row>
@@ -26,6 +26,9 @@
 
 <script>
 import { listArticle } from "@/api/board";
+import { mapState } from "vuex";
+
+const memberStore = "memberStore";
 
 export default {
   name: "BoardList",
@@ -40,7 +43,11 @@ export default {
       ],
     };
   },
+  computed: {
+    ...mapState(memberStore, ["userInfo"]),
+  },
   created() {
+    console.log(this.userInfo.uid);
     let param = {
       pg: 1,
       spp: 20,

@@ -44,9 +44,19 @@
                 @keyup.enter="confirm"
               ></b-form-input>
             </b-form-group>
+            <b-form-group label="닉네임:" label-for="nickname">
+              <b-form-input
+                type="text"
+                id="nickname"
+                v-model="user.nickname"
+                required
+                placeholder="닉네임...."
+                @keyup.enter="confirm"
+              ></b-form-input>
+            </b-form-group>
             <b-form-group label="전화번호:" label-for="userPhoneNumber">
               <b-form-input
-                type="email"
+                type="text"
                 id="userPhoneNumber"
                 v-model="user.phonenumber"
                 required
@@ -134,6 +144,10 @@ export default {
       }
       if (!this.user.phonenumber) {
         this.finalMessage = "전화번호를 적어주세요.";
+        return;
+      }
+      if (!this.user.nickname) {
+        this.finalMessage = "닉네임을 적어주세요.";
         return;
       }
       if (!this.user.password) {
