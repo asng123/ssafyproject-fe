@@ -212,6 +212,7 @@ export default {
       });
 <<<<<<< HEAD
 <<<<<<< HEAD
+<<<<<<< HEAD
 =======
 =======
 >>>>>>> 1664e03 ([feat] join)
@@ -227,6 +228,8 @@ export default {
 >>>>>>> 268263e ([feat] join)
 =======
 >>>>>>> 1664e03 ([feat] join)
+=======
+>>>>>>> 9acf518 ([feat] join 완성)
     },
     movePage() {
       this.$router.push({ name: "Join" });
