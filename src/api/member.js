@@ -30,6 +30,7 @@ async function logout(userid, success, fail) {
 }
 
 <<<<<<< HEAD
+<<<<<<< HEAD
 async function del(userid, success, fail) {
   await api.delete(`/user/${userid}`).then(success).catch(fail);
 =======
@@ -44,3 +45,6 @@ async function userupdate(user, success, fail) {
 }
 
 export { join, login, idCheck, findById, tokenRegeneration, logout, del, userupdate };
+=======
+export { join, login, idCheck, findById, tokenRegeneration, logout };
+>>>>>>> 9acf518 ([feat] join 완성)
