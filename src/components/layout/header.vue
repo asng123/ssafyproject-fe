@@ -72,13 +72,10 @@ export default {
       if (this.$route.path != "/") this.$router.push({ name: "main" });
       this.dropdown();
       this.$router.push({ name: "home" });
-<<<<<<< HEAD
     },
     onClickUserInfo() {
       this.dropdown();
       this.$router.push({ name: "memberinfo" });
-=======
->>>>>>> 9acf518 ([feat] join 완성)
     },
   },
   computed: {
@@ -115,24 +112,7 @@ export default {
   color: $main;
 }
 .home_header {
-<<<<<<< HEAD
-<<<<<<< HEAD
   position: sticky;
-=======
-  position: fixed;
-<<<<<<< HEAD
-<<<<<<< HEAD
-<<<<<<< HEAD
->>>>>>> 268263e ([feat] join)
-=======
->>>>>>> 1664e03 ([feat] join)
-=======
-  position: sticky;
->>>>>>> 9acf518 ([feat] join 완성)
-=======
->>>>>>> 268263e ([feat] join)
-=======
->>>>>>> 1664e03 ([feat] join)
 }
 #header a {
   color: $main;
