@@ -11,6 +11,39 @@ const routes = [
     component: HomeView,
   },
   {
+    path: "/board",
+    name: "board",
+    component: () => import("@/views/Board"),
+    redirect: "/board/list",
+    children: [
+      {
+        path: "list",
+        name: "boardlist",
+        component: () => import("@/components/board/BoardList"),
+      },
+      {
+        path: "write",
+        name: "boardwrite",
+        component: () => import("@/components/board/BoardWrite"),
+      },
+      {
+        path: "view/:bid",
+        name: "boardview",
+        component: () => import("@/components/board/BoardView"),
+      },
+      {
+        path: "modify",
+        name: "boardmodify",
+        component: () => import("@/components/board/BoardModify"),
+      },
+      {
+        path: "delete/:bid",
+        name: "boarddelete",
+        component: () => import("@/components/board/BoardDelete"),
+      },
+    ],
+  },
+  {
     path: "/user",
     name: "User",
     component: () => import("@/views/User"),
