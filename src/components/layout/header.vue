@@ -22,7 +22,7 @@
           <li v-else><a href="/user/login">로그인</a></li>
           <ul id="profile-content" v-show="isDropOpen">
             <li @click.prevent="onClickLogout">로그아웃</li>
-            <li>내 정보</li>
+            <li @click.prevent="onClickUserInfo">내 정보</li>
           </ul>
           <!-- before login-->
         </ul>
@@ -72,6 +72,10 @@ export default {
       if (this.$route.path != "/") this.$router.push({ name: "main" });
       this.dropdown();
       this.$router.push({ name: "home" });
+    },
+    onClickUserInfo() {
+      this.dropdown();
+      this.$router.push({ name: "memberinfo" });
     },
   },
   computed: {

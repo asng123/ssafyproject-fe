@@ -58,6 +58,11 @@ const routes = [
         name: "Join",
         component: () => import("@/components/users/UserJoin"),
       },
+      {
+        path: "memberinfo/:uid",
+        name: "memberinfo",
+        component: () => import("@/components/users/UserMyPage"),
+      },
     ],
   },
 ];
