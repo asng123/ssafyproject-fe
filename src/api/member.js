@@ -29,4 +29,12 @@ async function logout(userid, success, fail) {
   await api.get(`/user/logout/${userid}`).then(success).catch(fail);
 }
 
-export { join, login, idCheck, findById, tokenRegeneration, logout };
+async function del(userid, success, fail) {
+  await api.delete(`/user/${userid}`).then(success).catch(fail);
+}
+
+async function userupdate(user, success, fail) {
+  await api.put(`/user/`, user).then(success).catch(fail);
+}
+
+export { join, login, idCheck, findById, tokenRegeneration, logout, del, userupdate };
