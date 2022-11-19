@@ -38,3 +38,4 @@ async function userupdate(user, success, fail) {
 }
 
 export { join, login, idCheck, findById, tokenRegeneration, logout, del, userupdate };
+
