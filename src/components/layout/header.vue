@@ -10,7 +10,7 @@
       </div>
       <div id="right">
         <ul>
-          <li><font-awesome-icon icon="fa-solid fa-bell" /></li>
+          <li><a href="/board/list"><font-awesome-icon icon="fa-solid fa-bell" /></a></li>
           <!-- after login-->
           <li id="profile" @click="dropdown" v-if="userInfo">
             <font-awesome-icon icon="fa-solid fa-user" />
