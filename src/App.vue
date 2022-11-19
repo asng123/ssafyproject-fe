@@ -1,7 +1,9 @@
 <template>
   <div id="app">
     <header-section></header-section>
-    <router-view></router-view>
+    <div id="main_section">
+      <router-view></router-view>
+    </div>
     <footer-section></footer-section>
   </div>
 </template>
@@ -22,5 +24,8 @@ export default {
 #id {
   margin: 0;
   padding: 0;
+}
+#main_section {
+  min-height: 92vh;
 }
 </style>
