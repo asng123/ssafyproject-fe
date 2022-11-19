@@ -27,6 +27,10 @@ async function logout(userid, success, fail) {
 
 async function join(user, success, fail) {
   console.log("join", user);
+<<<<<<< HEAD
   await api.post(`/user/`, JSON.stringify(user)).then(success).catch(fail);
+=======
+  await api.post(`/user`, JSON.stringify(user)).then(success).catch(fail);
+>>>>>>> 268263e ([feat] join)
 }
 export { join, login, idCheck, findById, tokenRegeneration, logout };
