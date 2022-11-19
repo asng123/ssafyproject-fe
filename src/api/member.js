@@ -29,7 +29,6 @@ async function logout(userid, success, fail) {
   await api.get(`/user/logout/${userid}`).then(success).catch(fail);
 }
 
-<<<<<<< HEAD
 async function del(userid, success, fail) {
   await api.delete(`/user/${userid}`).then(success).catch(fail);
 }
@@ -39,10 +38,3 @@ async function userupdate(user, success, fail) {
 }
 
 export { join, login, idCheck, findById, tokenRegeneration, logout, del, userupdate };
-=======
-async function join(user, success, fail) {
-  console.log("join", user);
-  await api.post(`/user`, JSON.stringify(user)).then(success).catch(fail);
-}
-export { join, login, idCheck, findById, tokenRegeneration, logout };
->>>>>>> 268263e ([feat] join)
