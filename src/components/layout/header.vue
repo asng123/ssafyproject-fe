@@ -20,7 +20,7 @@
           </li>
           <li v-else><a href="/user/login">로그인</a></li>
           <ul id="profile-content" v-show="isDropOpen">
-            <li>로그아웃</li>
+            <li @click.prevent="onClickLogout">로그아웃</li>
             <li>내 정보</li>
           </ul>
           <!-- before login-->
@@ -51,6 +51,22 @@ export default {
     dropdown() {
       this.isDropOpen = !this.isDropOpen;
       console.log("drop", this.isDropOpen);
+    },
+    ...mapActions(memberStore, ["userLogout"]),
+    onClickLogout() {
+      // this.SET_IS_LOGIN(false);
+      // this.SET_USER_INFO(null);
+      // sessionStorage.removeItem("access-token");
+      // if (this.$route.path != "/") this.$router.push({ name: "main" });
+      console.log(this.userInfo);
+      //vuex actions에서 userLogout 실행(Backend에 저장 된 리프레시 토큰 없애기
+      //+ satate에 isLogin, userInfo 정보 변경)
+      // this.$store.dispatch("userLogout", this.userInfo.userid);
+      this.userLogout(this.userInfo.uid);
+      sessionStorage.removeItem("access-token"); //저장된 토큰 없애기
+      sessionStorage.removeItem("refresh-token"); //저장된 토큰 없애기
+      if (this.$route.path != "/") this.$router.push({ name: "main" });
+      this.dropdown();
     },
   },
   computed: {

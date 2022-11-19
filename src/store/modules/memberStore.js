@@ -66,6 +66,7 @@ const memberStore = {
       await findById(
         decodeToken.userid,
         ({ data }) => {
+          console.log("getUserInfo", data);
           if (data.message === "success") {
             commit("SET_USER_INFO", data.userInfo);
             // console.log("3. getUserInfo data >> ", data);
@@ -74,14 +75,20 @@ const memberStore = {
           }
         },
         async (error) => {
-          console.log("getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ", error.response.status);
+          console.log(
+            "getUserInfo() error code [토큰 만료되어 사용 불가능.] ::: ",
+            error.response.status
+          );
           commit("SET_IS_VALID_TOKEN", false);
           await dispatch("tokenRegeneration");
         }
       );
     },
     async tokenRegeneration({ commit, state }) {
-      console.log("토큰 재발급 >> 기존 토큰 정보 : {}", sessionStorage.getItem("access-token"));
+      console.log(
+        "토큰 재발급 >> 기존 토큰 정보 : {}",
+        sessionStorage.getItem("access-token")
+      );
       await tokenRegeneration(
         JSON.stringify(state.userInfo),
         ({ data }) => {
