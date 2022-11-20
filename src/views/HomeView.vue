@@ -173,9 +173,10 @@ export default {
     async findHouseDealInfo() {
       // 주택 거래 정보 가져오기
       console.log("find house deal info", this.regCode);
-      await getHouseInfo(this.regCode.substr(0, 5), "202004").then(
+      await getHouseInfo(this.regCode.substr(0, 5), "202007").then(
         ({ data }) => {
           console.log(data);
+          console.log(data.response.body.items.item);
 
           let parser = new DOMParser();
           const xml = parser.parseFromString(data, "application/xml");
