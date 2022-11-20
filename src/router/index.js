@@ -70,6 +70,37 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/question",
+    name: "question",
+    component: () => import("@/views/Question"),
+    redirect: "/question/list",
+    children: [
+      {
+        path: "list",
+        name: "questionlist",
+        component: () => import("@/components/question/QuestionList"),
+      },
+      {
+        path: "write",
+        name: "questionwrite",
+        component: () => import("@/components/question/QuestionWrite"),
+      },
+      {
+        path: "view/:qid",
+        name: "questionview",
+        component: () => import("@/components/question/QuestionView"),
+      },{
+        path: "delete/:qid",
+        name: "questiondelete",
+        component: () => import("@/components/question/QuestionDelete"),
+      },{
+        path: "modify/:qid",
+        name: "questionmodify",
+        component: () => import("@/components/question/QuestionModify"),
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({
