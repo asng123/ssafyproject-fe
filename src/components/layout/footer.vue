@@ -2,8 +2,8 @@
   <div id="footer">
     <div id="nav">
       <div id="left">
-        <ul>
-          <li>고객센터</li>
+        <ul>2
+          <li @click.prevent="onClickquestionpage">고객센터</li>
         </ul>
       </div>
       <div id="right">
@@ -18,6 +18,11 @@
 <script>
 export default {
   data: () => ({}),
+  methods: {
+    onClickquestionpage() {
+      this.$router.push({ name: "question" });
+    },
+  },
 };
 </script>
 
