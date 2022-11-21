@@ -21,4 +21,8 @@ function updateQnA(question, success, fail) {
 function deleteQuestion(qid, success, fail) {
   api.delete(`/question/${qid}`).then(success).catch(fail);
 }
-export { listQuestion, writeQuestion, questionDetail, updateQnA, deleteQuestion };
+
+function writeAnswer(question, success, fail) {
+  api.put(`/question/answer`, JSON.stringify(question)).then(success).catch(fail);
+}
+export { listQuestion, writeQuestion, questionDetail, updateQnA, deleteQuestion, writeAnswer};
