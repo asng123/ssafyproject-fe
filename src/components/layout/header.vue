@@ -46,7 +46,8 @@ export default {
     };
   },
   created() {
-    this.isAdmin = this.userInfo.uid === "admin"; 
+    console.log(this.userInfo);
+    this.isAdmin = this.userInfo ? this.userInfo.uid === "admin" : false;
     window.addEventListener("scroll", this.updateScroll);
     this.isHome = window.location.pathname === "/";
     console.log("w", window.location.pathname);

@@ -17,7 +17,7 @@
       </form>
     </div>
     <div id="map_div" v-show="isFocus">
-      <div id="current">{{ currentName }}</div>
+      <div id="current">{{ currentAddress }}</div>
       <div id="map"></div>
     </div>
   </div>
@@ -40,13 +40,14 @@ export default {
       map: null,
       ps: null,
       geocoder: null,
-      currentName: "",
+      currentAddress: "",
       searchValue: "",
       marker: null,
       mapTypeControl: null,
       zoomControl: null,
-      sidoRegCode: [],
       regCode: "11140",
+      currentPrevAddress: "",
+      dong: "",
     };
   },
   async created() {},
@@ -78,7 +79,7 @@ export default {
       console.log(mapContainer);
       const mapOption = {
         center: new kakao.maps.LatLng(this.current.lat, this.current.lng),
-        level: 3,
+        level: 4,
       };
       // 필요한 객체 할당
       this.map = new kakao.maps.Map(mapContainer, mapOption);
@@ -92,15 +93,15 @@ export default {
       );
       this.zoomControl = new kakao.maps.ZoomControl();
       this.map.addControl(this.zoomControl, kakao.maps.ControlPosition.RIGHT);
+      // 부가
+      this.addDragEventControl(); // 드래그 이벤트 등록
+      this.getCenter(); // 중앙 위치 장소 가져오기
       this.map.relayout();
       this.map.setCenter(
         new kakao.maps.LatLng(this.current.lat, this.current.lng)
       );
-      // 부가
-      this.addDragEventControl(); // 드래그 이벤트 등록
-      this.setCenter(); // 중앙 위치 장소 가져오기
     },
-    setCenter() {
+    getCenter() {
       this.searchAddrFromCoords(this.current, this.getAddressFromRes); // 중앙 정보의 이름, regcode 받아오기
     },
     addDragEventControl() {
@@ -127,16 +128,20 @@ export default {
           // 법정동 region_type 값은 'B' 이므로
           console.log("result address", result);
           if (result[i].region_type === "B") {
-            this.currentName = result[i].address_name;
+            this.currentAddress = result[i].address_name;
+            const temp = this.currentAddress.split(" ");
+            this.currentPrevAddress = `${temp[0]} ${temp[1]}`;
+            this.dong = temp[2];
             console.log(result[i].code);
             this.regCode = result[i].code;
+
             break;
           }
         }
         console.log("sc", this.regCode);
         this.findHouseDealInfo();
       } else {
-        this.currentName = "실패";
+        this.currentAddress = "실패";
       }
     },
     getSearchResult() {
@@ -173,22 +178,47 @@ export default {
     async findHouseDealInfo() {
       // 주택 거래 정보 가져오기
       console.log("find house deal info", this.regCode);
+      console.log("prevAddress", this.currentPrevAddress);
+      // this.convertToLatLng("서울특별시 중구 태평로1가 146-1 삼풍");
       await getHouseInfo(this.regCode.substr(0, 5), "202007").then(
         ({ data }) => {
-          console.log(data);
           console.log(data.response.body.items.item);
-
-          let parser = new DOMParser();
-          const xml = parser.parseFromString(data, "application/xml");
-          console.log(xml);
-          let apts = xml.querySelectorAll("item");
-          console.log(apts);
+          data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
+            console.log(지번, 법정동, 아파트);
+            지번 = 지번 ? 지번 : " ";
+            법정동 = 법정동.trim();
+            아파트 = 아파트.trim();
+            if (법정동 === this.dong) {
+              const place = this.convertToLatLng(
+                `${this.currentPrevAddress} ${법정동} ${지번} ${아파트}`
+              );
+            }
+          });
         }
       );
     },
+    convertToLatLng(address) {
+      console.log("ctl", address);
+      this.geocoder.addressSearch(address, (result, status) => {
+        if (status === kakao.maps.services.Status.OK) {
+          let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+          console.log(coords); // 변환된 자표
+
+          // 결과값으로 받은 위치를 마커로 표시합니다
+          var marker = new kakao.maps.Marker({
+            map: this.map,
+            position: coords,
+          });
+
+          // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+        } else {
+          console.log("not okay");
+        }
+      });
+    },
     async findRegCode() {
-      const temp = this.currentName.split(" ");
-      console.log(temp, this.currentName);
+      const temp = this.currentAddress.split(" ");
+      console.log(temp, this.currentAddress);
       await getMapInfo("11140*").then((result) => {
         this.regcodes = result.data.regcodes;
         console.log("rg", this.regcodes);
