@@ -9,9 +9,9 @@
       <b-col class="text-left">
         <b-button variant="outline-primary" @click="moveList">목록</b-button>
       </b-col>
-      <b-col class="text-right" v-if="userInfo.uid === question.uid || userInfo.uid === `admin`">
-        <!-- admin일땐 답변작성으로 보이고 싶은데 어케할까 -->
-        <b-button variant="outline-info" size="sm" @click="moveModifyQuestion" class="mr-2">글수정</b-button>
+      <b-col class="text-right">
+        <b-button variant="outline-info" size="sm" @click="moveModifyQuestion" class="mr-2"  v-if="userInfo.uid === question.uid">글수정</b-button>
+        <b-button variant="outline-info" size="sm" @click="writeanswer" class="mr-2"  v-if="userInfo.uid === `admin`">답변작성</b-button>
         <b-button variant="outline-danger" size="sm" @click="deletequestion">글삭제</b-button>
       </b-col>
     </b-row>
@@ -81,6 +81,12 @@ export default {
     moveModifyQuestion() {
       this.$router.replace({
         name: "questionmodify",
+        params: { qid: this.question.qid },
+      });
+    },
+    writeanswer() {
+      this.$router.replace({
+        name: "writeanswer",
         params: { qid: this.question.qid },
       });
     },

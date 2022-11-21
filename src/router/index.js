@@ -90,14 +90,21 @@ const routes = [
         path: "view/:qid",
         name: "questionview",
         component: () => import("@/components/question/QuestionView"),
-      },{
+      },
+      {
         path: "delete/:qid",
         name: "questiondelete",
         component: () => import("@/components/question/QuestionDelete"),
-      },{
+      },
+      {
         path: "modify/:qid",
         name: "questionmodify",
         component: () => import("@/components/question/QuestionModify"),
+      },
+      {
+        path: "writeanswer",
+        name: "writeanswer",
+        component: () => import("@/components/question/AnswerWrite"),
       },
     ],
   },
