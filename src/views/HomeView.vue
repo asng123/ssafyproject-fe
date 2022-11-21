@@ -36,7 +36,7 @@ export default {
     return {
       isFocus: false,
       prevRoute: null,
-      current: { lat: 37.56666, lng: 126.978 },
+      current: { lat: 37.5, lng: 127.039 },
       map: null,
       ps: null,
       geocoder: null,
@@ -180,55 +180,75 @@ export default {
       console.log("find house deal info", this.regCode);
       console.log("prevAddress", this.currentPrevAddress);
       // this.convertToLatLng("서울특별시 중구 태평로1가 146-1 삼풍");
-      await getHouseInfo(this.regCode.substr(0, 5), "202007").then(
-        ({ data }) => {
-          console.log(data.response.body.items.item);
-          data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
-            console.log(지번, 법정동, 아파트);
-            지번 = 지번 ? 지번 : " ";
-            법정동 = 법정동.trim();
-            아파트 = 아파트.trim();
-            if (법정동 === this.dong) {
-              const place = this.convertToLatLng(
-                `${this.currentPrevAddress} ${법정동} ${지번} ${아파트}`,`${아파트}`
-              );
-            }
-          });
-        }
-      );
-    },
-    convertToLatLng(address, apartname) {
-      console.log("ctl", address);
-      this.geocoder.addressSearch(address, (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-          let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-          console.log(coords); // 변환된 자표
-          
-          // 결과값으로 받은 위치를 마커로 표시합니다
-          // var marker = new kakao.maps.Marker({
-          //   map: this.map,
-          //   position: coords,
-          //   // image: markerImage,
-          // });
-
-          var content = '<div class="customoverlay">' +
-                      '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
-                      `    <span class="title"> ${apartname} </span>` +
-                      '  </a>' +
-                      '</div>';
-          var customOverlay = new kakao.maps.CustomOverlay({
-            map: this.map,
-            position: coords,
-            content: content,
-            yAnchor: 1 
-          });
-
-          customOverlay.setMap(this.map);
-          // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-        } else {
-          console.log("not okay");
-        }
+      await getHouseInfo(this.regCode).then(({ data }) => {
+        // console.log(data.response.body.items.item);
+        // data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
+        //   console.log(지번, 법정동, 아파트);
+        //   지번 = 지번 ? 지번 : " ";
+        //   법정동 = 법정동.trim();
+        //   아파트 = 아파트.trim();
+        //   if (법정동 === this.dong) {
+        //     const place = this.convertToLatLng(
+        //       `${this.currentPrevAddress} ${법정동} ${지번} ${아파트}`,`${아파트}`
+        //     );
+        //   }
+        // });
+        console.log("res", data);
+        data.forEach(({ aptName, jibun, lat, lng }) => {
+          this.houseInfoMarker(aptName, jibun, lat, lng);
+        });
       });
+      console.log("finish");
+    },
+    houseInfoMarker(aptName, jibun, lat, lng) {
+      console.log("ctl", aptName, jibun, lat, lng);
+      let coords = new kakao.maps.LatLng(lat, lng);
+      var content =
+        '<div class="customoverlay">' +
+        '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
+        `    <span class="title"> ${aptName} </span>` +
+        "  </a>" +
+        "</div>";
+      var customOverlay = new kakao.maps.CustomOverlay({
+        map: this.map,
+        position: coords,
+        content: content,
+        yAnchor: 1,
+      });
+
+      customOverlay.setMap(this.map);
+      // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+      // this.geocoder.addressSearch(address, (result, status) => {
+      //   if (status === kakao.maps.services.Status.OK) {
+      //     let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+      //     console.log(coords); // 변환된 자표
+
+      //     // 결과값으로 받은 위치를 마커로 표시합니다
+      //     // var marker = new kakao.maps.Marker({
+      //     //   map: this.map,
+      //     //   position: coords,
+      //     //   // image: markerImage,
+      //     // });
+
+      //     var content =
+      //       '<div class="customoverlay">' +
+      //       '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
+      //       `    <span class="title"> ${apartname} </span>` +
+      //       "  </a>" +
+      //       "</div>";
+      //     var customOverlay = new kakao.maps.CustomOverlay({
+      //       map: this.map,
+      //       position: coords,
+      //       content: content,
+      //       yAnchor: 1,
+      //     });
+
+      //     customOverlay.setMap(this.map);
+      //     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+      //   } else {
+      //     console.log("not okay");
+      //   }
+      // });
     },
     async findRegCode() {
       const temp = this.currentAddress.split(" ");
@@ -330,13 +350,52 @@ export default {
   margin: 10px 0px;
   z-index: 50;
 }
-
 </style>
 
 <style>
-.customoverlay {position:relative;bottom:85px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;}
-.customoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
-.customoverlay a {display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:14px;font-weight:bold;overflow:hidden;background: #d95050;background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;}
-.customoverlay .title {display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;}
-.customoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+.customoverlay {
+  position: relative;
+  bottom: 85px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #ddd;
+  float: left;
+}
+.customoverlay:nth-of-type(n) {
+  border: 0;
+  box-shadow: 0px 1px 2px #888;
+}
+.customoverlay a {
+  display: block;
+  text-decoration: none;
+  color: #000;
+  text-align: center;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  overflow: hidden;
+  background: #d95050;
+  background: #d95050
+    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+    no-repeat right 14px center;
+}
+.customoverlay .title {
+  display: block;
+  text-align: center;
+  background: #fff;
+  margin-right: 35px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+}
+.customoverlay:after {
+  content: "";
+  position: absolute;
+  margin-left: -12px;
+  left: 50%;
+  bottom: -12px;
+  width: 22px;
+  height: 12px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
+}
 </style>
