@@ -15,6 +15,7 @@ async function getHouseInfo(regCode, dealYMD, success, fail) {
   const params = {
     LAWD_CD: regCode,
     DEAL_YMD: dealYMD,
+    numOfRows: 30,
     serviceKey: decodeURIComponent(process.env.VUE_APP_APT_DEAL_API_KEY),
   };
 
