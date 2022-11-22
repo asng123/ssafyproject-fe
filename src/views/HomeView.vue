@@ -17,7 +17,71 @@
       </form>
     </div>
     <div id="map_div" v-show="isFocus">
-      <div id="current">{{ currentAddress }}</div>
+      <div class="side_container" v-show="isSideOpen">
+        <div id="side">
+          <div id="apartment_name">한강메트로자이 2단지</div>
+          <button @click.prevent="clickSide">
+            <font-awesome-icon icon="fa-solid fa-xmark" />
+          </button>
+          <b-carousel
+            id="carousel-1"
+            v-model="slide"
+            :interval="4000"
+            controls
+            indicators
+            background="#ababab"
+            img-width="1024"
+            img-height="480"
+            style="text-shadow: 1px 1px 2px #333"
+            @sliding-start="onSlideStart"
+            @sliding-end="onSlideEnd"
+          >
+            <!-- Text slides with image -->
+            <b-carousel-slide
+              caption="First slide"
+              text="Nulla vitae elit libero, a pharetra augue mollis interdum."
+              img-src="https://picsum.photos/1024/480/?image=52"
+            ></b-carousel-slide>
+
+            <!-- Slides with custom text -->
+            <b-carousel-slide
+              img-src="https://picsum.photos/1024/480/?image=54"
+            >
+              <h1>Hello world!</h1>
+            </b-carousel-slide>
+
+            <!-- Slides with image only -->
+            <b-carousel-slide
+              img-src="https://picsum.photos/1024/480/?image=58"
+            ></b-carousel-slide>
+
+            <!-- Slides with img slot -->
+            <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
+
+            <!-- Slide with blank fluid image to maintain slide aspect ratio -->
+          </b-carousel>
+        </div>
+        <div>
+          <b-table striped hover :items="houseDetailInfos"></b-table>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+      </div>
+      <!-- <div id="current">{{ currentAddress }}</div> -->
       <div id="map"></div>
     </div>
   </div>
@@ -25,12 +89,13 @@
 
 <script>
 import axios from "axios";
-import { getMapInfo, getHouseInfo } from "@/api/map";
+import { getMapInfo, getHouseInfo, getHouseDetailInfo } from "@/api/map";
+import Side from "@/components/map/side.vue";
 
 export default {
   name: "Home",
   components: {
-    SearchSection: () => import("@/components/common/searchBar.vue"),
+    Side,
   },
   data() {
     return {
@@ -48,6 +113,19 @@ export default {
       regCode: "11140",
       currentPrevAddress: "",
       dong: "",
+      isSideOpen: false,
+      items: [
+        {
+          age: 40,
+          first_name: "Dickerson",
+          last_name: "Macdonald",
+          hi: "yeri",
+        },
+        { age: 21, first_name: "Larsen", last_name: "Shaw", hi: "yeri" },
+        { age: 89, first_name: "Geneva", last_name: "Wilson", hi: "yeri" },
+        { age: 38, first_name: "Jami", last_name: "Carney", hi: "yeri" },
+      ],
+      houseDetailInfos: [],
     };
   },
   async created() {},
@@ -193,22 +271,27 @@ export default {
         //     );
         //   }
         // });
-        console.log("res", data);
+        // console.log("res", data);
         data.forEach(({ aptName, jibun, lat, lng }) => {
           this.houseInfoMarker(aptName, jibun, lat, lng);
         });
       });
       console.log("finish");
+      this.addHouseInfoEventListener();
     },
     houseInfoMarker(aptName, jibun, lat, lng) {
       console.log("ctl", aptName, jibun, lat, lng);
       let coords = new kakao.maps.LatLng(lat, lng);
       var content =
-        '<div class="customoverlay">' +
-        '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
+        `<div class="customoverlay house_info_marker" data-aptName=${aptName} data-dongCode=${this.regCode}>` +
         `    <span class="title"> ${aptName} </span>` +
-        "  </a>" +
         "</div>";
+      // '<div class="customoverlay">' +
+      // '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
+      // `    <span class="title"> ${aptName} </span>` +
+      // "  </a>" +
+      // "</div>";
+
       var customOverlay = new kakao.maps.CustomOverlay({
         map: this.map,
         position: coords,
@@ -250,6 +333,56 @@ export default {
       //   }
       // });
     },
+    addHouseInfoEventListener() {
+      document.querySelectorAll(".house_info_marker").forEach((node) => {
+        node.addEventListener("click", async (e) => {
+          console.log("click", e);
+          this.isSideOpen = true;
+          const aptName = node.attributes["data-aptname"].value;
+          const dong = node.attributes["data-dongCode"].value;
+          console.log(dong, aptName);
+          document.querySelector("#apartment_name").innerHTML = aptName;
+          // this.makeMap();
+          await getHouseDetailInfo(dong, aptName).then(({ data }) => {
+            console.log(data);
+            this.houseDetailInfos = data.reduce(
+              (
+                cur,
+                {
+                  apartmentName,
+                  area,
+                  buildYear,
+                  dealAmount,
+                  dealDay,
+                  dealMonth,
+                  dealYear,
+                  floor,
+                  jibun,
+                  roadName,
+                }
+              ) => {
+                return [
+                  ...cur,
+                  {
+                    아파트: apartmentName,
+                    주소: `${roadName} ${jibun}`,
+                    층: floor,
+                    면적: area,
+                    가격: `${dealAmount}원`,
+                    "준공 년도": `${buildYear}년`,
+                    "최근 거래일": `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
+                  },
+                ];
+              },
+              []
+            );
+          });
+        });
+      });
+    },
+    clickSide() {
+      this.isSideOpen = !this.isSideOpen;
+    },
     async findRegCode() {
       const temp = this.currentAddress.split(" ");
       console.log(temp, this.currentAddress);
@@ -269,7 +402,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #main {
   width: 100%;
   height: 100vh;
@@ -350,6 +483,21 @@ export default {
   margin: 10px 0px;
   z-index: 50;
 }
+.house_info_marker {
+  cursor: pointer;
+}
+.side_container {
+  position: absolute;
+  width: 30%;
+  min-width: 300px;
+  height: 100vh;
+  z-index: 50;
+  background: white;
+  box-shadow: 3px 3px 3px #00000050;
+  border-radius: 10px;
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+}
 </style>
 
 <style>
@@ -359,6 +507,7 @@ export default {
   border-radius: 6px;
   border: 1px solid #ccc;
   border-bottom: 2px solid #ddd;
+  z-index: 60;
   float: left;
 }
 .customoverlay:nth-of-type(n) {

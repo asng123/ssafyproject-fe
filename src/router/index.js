@@ -108,6 +108,24 @@ const routes = [
       },
     ],
   },
+  {
+    path: "/zip",
+    name: "Zip",
+    component: () => import("@/views/ZipView"),
+    redirect: "/board/list",
+    children: [
+      {
+        path: "list",
+        name: "ziplist",
+        component: () => import("@/components/zip/ZipList"),
+      },
+      {
+        path: "write",
+        name: "zipwrite",
+        component: () => import("@/components/zip/ZipWrite"),
+      },
+    ],
+  },
 ];
 
 const router = new VueRouter({

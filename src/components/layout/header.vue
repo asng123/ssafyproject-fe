@@ -4,8 +4,8 @@
     <div id="nav">
       <div id="left">
         <ul>
-          <li>내집 찾기</li>
-          <li>내집 소개</li>
+          <li><a href="/zip/list">내집 찾기</a></li>
+          <li><a href="/zip/write">내집 소개</a></li>
         </ul>
       </div>
       <div id="right">
