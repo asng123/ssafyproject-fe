@@ -62,7 +62,20 @@
           </b-carousel>
         </div>
         <div>
-          <b-table striped hover :items="houseDetailInfos"></b-table>
+          <b-table 
+            stacked 
+            :items="houseDetailInfos" 
+            hover 
+            :per-page="perPage"
+            :current-page="currentPage"
+          ></b-table>
+          <b-pagination
+          v-model="currentPage"
+          align="center"
+          pills :total-rows="rows"
+          :per-page="perPage"
+          size="sm"
+        ></b-pagination>
         </div>
         <div>
           <div>근처 정보</div>
@@ -99,6 +112,8 @@ export default {
   },
   data() {
     return {
+      perPage: 1,
+      currentPage: 1,
       isFocus: false,
       prevRoute: null,
       current: { lat: 37.5, lng: 127.039 },
@@ -127,6 +142,11 @@ export default {
       ],
       houseDetailInfos: [],
     };
+  },
+  computed: {
+    rows() {
+      return this.houseDetailInfos.length;
+    },
   },
   async created() {},
   components: {
@@ -370,7 +390,7 @@ export default {
                     면적: area,
                     가격: `${dealAmount}원`,
                     "준공 년도": `${buildYear}년`,
-                    "최근 거래일": `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
+                    "거래일": `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
                   },
                 ];
               },
@@ -549,3 +569,5 @@ export default {
   background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
 }
 </style>
+
+
