@@ -17,7 +17,71 @@
       </form>
     </div>
     <div id="map_div" v-show="isFocus">
-      <div id="current">{{ currentAddress }}</div>
+      <div class="side_container" v-show="isSideOpen">
+        <div id="side">
+          <div id="apartment_name">한강메트로자이 2단지</div>
+          <button @click.prevent="clickSide">
+            <font-awesome-icon icon="fa-solid fa-xmark" />
+          </button>
+          <b-carousel
+            id="carousel-1"
+            v-model="slide"
+            :interval="4000"
+            controls
+            indicators
+            background="#ababab"
+            img-width="1024"
+            img-height="480"
+            style="text-shadow: 1px 1px 2px #333"
+            @sliding-start="onSlideStart"
+            @sliding-end="onSlideEnd"
+          >
+            <!-- Text slides with image -->
+            <b-carousel-slide
+              caption="First slide"
+              text="Nulla vitae elit libero, a pharetra augue mollis interdum."
+              img-src="https://picsum.photos/1024/480/?image=52"
+            ></b-carousel-slide>
+
+            <!-- Slides with custom text -->
+            <b-carousel-slide
+              img-src="https://picsum.photos/1024/480/?image=54"
+            >
+              <h1>Hello world!</h1>
+            </b-carousel-slide>
+
+            <!-- Slides with image only -->
+            <b-carousel-slide
+              img-src="https://picsum.photos/1024/480/?image=58"
+            ></b-carousel-slide>
+
+            <!-- Slides with img slot -->
+            <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
+
+            <!-- Slide with blank fluid image to maintain slide aspect ratio -->
+          </b-carousel>
+        </div>
+        <div>
+          <b-table striped hover :items="houseDetailInfos"></b-table>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+        <div>
+          <div>근처 정보</div>
+          <div id="mini_map">지도 위치</div>
+        </div>
+      </div>
+      <!-- <div id="current">{{ currentAddress }}</div> -->
       <div id="map"></div>
     </div>
   </div>
@@ -25,18 +89,19 @@
 
 <script>
 import axios from "axios";
-import { getMapInfo, getHouseInfo } from "@/api/map";
+import { getMapInfo, getHouseInfo, getHouseDetailInfo } from "@/api/map";
+import Side from "@/components/map/side.vue";
 
 export default {
   name: "Home",
   components: {
-    SearchSection: () => import("@/components/common/searchBar.vue"),
+    Side,
   },
   data() {
     return {
       isFocus: false,
       prevRoute: null,
-      current: { lat: 37.56666, lng: 126.978 },
+      current: { lat: 37.5, lng: 127.039 },
       map: null,
       ps: null,
       geocoder: null,
@@ -48,6 +113,19 @@ export default {
       regCode: "11140",
       currentPrevAddress: "",
       dong: "",
+      isSideOpen: false,
+      items: [
+        {
+          age: 40,
+          first_name: "Dickerson",
+          last_name: "Macdonald",
+          hi: "yeri",
+        },
+        { age: 21, first_name: "Larsen", last_name: "Shaw", hi: "yeri" },
+        { age: 89, first_name: "Geneva", last_name: "Wilson", hi: "yeri" },
+        { age: 38, first_name: "Jami", last_name: "Carney", hi: "yeri" },
+      ],
+      houseDetailInfos: [],
     };
   },
   async created() {},
@@ -180,55 +258,131 @@ export default {
       console.log("find house deal info", this.regCode);
       console.log("prevAddress", this.currentPrevAddress);
       // this.convertToLatLng("서울특별시 중구 태평로1가 146-1 삼풍");
-      await getHouseInfo(this.regCode.substr(0, 5), "202007").then(
-        ({ data }) => {
-          console.log(data.response.body.items.item);
-          data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
-            console.log(지번, 법정동, 아파트);
-            지번 = 지번 ? 지번 : " ";
-            법정동 = 법정동.trim();
-            아파트 = 아파트.trim();
-            if (법정동 === this.dong) {
-              const place = this.convertToLatLng(
-                `${this.currentPrevAddress} ${법정동} ${지번} ${아파트}`,`${아파트}`
-              );
-            }
-          });
-        }
-      );
-    },
-    convertToLatLng(address, apartname) {
-      console.log("ctl", address);
-      this.geocoder.addressSearch(address, (result, status) => {
-        if (status === kakao.maps.services.Status.OK) {
-          let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-          console.log(coords); // 변환된 자표
-          
-          // 결과값으로 받은 위치를 마커로 표시합니다
-          // var marker = new kakao.maps.Marker({
-          //   map: this.map,
-          //   position: coords,
-          //   // image: markerImage,
-          // });
-
-          var content = '<div class="customoverlay">' +
-                      '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
-                      `    <span class="title"> ${apartname} </span>` +
-                      '  </a>' +
-                      '</div>';
-          var customOverlay = new kakao.maps.CustomOverlay({
-            map: this.map,
-            position: coords,
-            content: content,
-            yAnchor: 1 
-          });
-
-          customOverlay.setMap(this.map);
-          // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-        } else {
-          console.log("not okay");
-        }
+      await getHouseInfo(this.regCode).then(({ data }) => {
+        // console.log(data.response.body.items.item);
+        // data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
+        //   console.log(지번, 법정동, 아파트);
+        //   지번 = 지번 ? 지번 : " ";
+        //   법정동 = 법정동.trim();
+        //   아파트 = 아파트.trim();
+        //   if (법정동 === this.dong) {
+        //     const place = this.convertToLatLng(
+        //       `${this.currentPrevAddress} ${법정동} ${지번} ${아파트}`,`${아파트}`
+        //     );
+        //   }
+        // });
+        // console.log("res", data);
+        data.forEach(({ aptName, jibun, lat, lng }) => {
+          this.houseInfoMarker(aptName, jibun, lat, lng);
+        });
       });
+      console.log("finish");
+      this.addHouseInfoEventListener();
+    },
+    houseInfoMarker(aptName, jibun, lat, lng) {
+      console.log("ctl", aptName, jibun, lat, lng);
+      let coords = new kakao.maps.LatLng(lat, lng);
+      var content =
+        `<div class="customoverlay house_info_marker" data-aptName=${aptName} data-dongCode=${this.regCode}>` +
+        `    <span class="title"> ${aptName} </span>` +
+        "</div>";
+      // '<div class="customoverlay">' +
+      // '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
+      // `    <span class="title"> ${aptName} </span>` +
+      // "  </a>" +
+      // "</div>";
+
+      var customOverlay = new kakao.maps.CustomOverlay({
+        map: this.map,
+        position: coords,
+        content: content,
+        yAnchor: 1,
+      });
+
+      customOverlay.setMap(this.map);
+      // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+      // this.geocoder.addressSearch(address, (result, status) => {
+      //   if (status === kakao.maps.services.Status.OK) {
+      //     let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
+      //     console.log(coords); // 변환된 자표
+
+      //     // 결과값으로 받은 위치를 마커로 표시합니다
+      //     // var marker = new kakao.maps.Marker({
+      //     //   map: this.map,
+      //     //   position: coords,
+      //     //   // image: markerImage,
+      //     // });
+
+      //     var content =
+      //       '<div class="customoverlay">' +
+      //       '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
+      //       `    <span class="title"> ${apartname} </span>` +
+      //       "  </a>" +
+      //       "</div>";
+      //     var customOverlay = new kakao.maps.CustomOverlay({
+      //       map: this.map,
+      //       position: coords,
+      //       content: content,
+      //       yAnchor: 1,
+      //     });
+
+      //     customOverlay.setMap(this.map);
+      //     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
+      //   } else {
+      //     console.log("not okay");
+      //   }
+      // });
+    },
+    addHouseInfoEventListener() {
+      document.querySelectorAll(".house_info_marker").forEach((node) => {
+        node.addEventListener("click", async (e) => {
+          console.log("click", e);
+          this.isSideOpen = true;
+          const aptName = node.attributes["data-aptname"].value;
+          const dong = node.attributes["data-dongCode"].value;
+          console.log(dong, aptName);
+          document.querySelector("#apartment_name").innerHTML = aptName;
+          // this.makeMap();
+          await getHouseDetailInfo(dong, aptName).then(({ data }) => {
+            console.log(data);
+            this.houseDetailInfos = data.reduce(
+              (
+                cur,
+                {
+                  apartmentName,
+                  area,
+                  buildYear,
+                  dealAmount,
+                  dealDay,
+                  dealMonth,
+                  dealYear,
+                  floor,
+                  jibun,
+                  roadName,
+                }
+              ) => {
+                return [
+                  ...cur,
+                  {
+                    아파트: apartmentName,
+                    주소: `${roadName} ${jibun}`,
+                    층: floor,
+                    면적: area,
+                    가격: `${dealAmount}원`,
+                    "준공 년도": `${buildYear}년`,
+                    "최근 거래일": `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
+                  },
+                ];
+              },
+              []
+            );
+          });
+        });
+
+      });
+    },
+    clickSide() {
+      this.isSideOpen = !this.isSideOpen;
     },
     async findRegCode() {
       const temp = this.currentAddress.split(" ");
@@ -249,7 +403,7 @@ export default {
   },
 };
 </script>
-<style lang="scss">
+<style lang="scss" scoped>
 #main {
   width: 100%;
   height: 100vh;
@@ -330,13 +484,68 @@ export default {
   margin: 10px 0px;
   z-index: 50;
 }
-
+.house_info_marker {
+  cursor: pointer;
+}
+.side_container {
+  position: absolute;
+  width: 30%;
+  min-width: 300px;
+  height: 100vh;
+  z-index: 50;
+  background: white;
+  box-shadow: 3px 3px 3px #00000050;
+  border-radius: 10px;
+  overflow: scroll;
+  scrollbar-width: none; /* Firefox */
+}
 </style>
 
 <style>
-.customoverlay {position:relative;bottom:85px;border-radius:6px;border: 1px solid #ccc;border-bottom:2px solid #ddd;float:left;}
-.customoverlay:nth-of-type(n) {border:0; box-shadow:0px 1px 2px #888;}
-.customoverlay a {display:block;text-decoration:none;color:#000;text-align:center;border-radius:6px;font-size:14px;font-weight:bold;overflow:hidden;background: #d95050;background: #d95050 url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png) no-repeat right 14px center;}
-.customoverlay .title {display:block;text-align:center;background:#fff;margin-right:35px;padding:10px 15px;font-size:14px;font-weight:bold;}
-.customoverlay:after {content:'';position:absolute;margin-left:-12px;left:50%;bottom:-12px;width:22px;height:12px;background:url('https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png')}
+.customoverlay {
+  position: relative;
+  bottom: 85px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  border-bottom: 2px solid #ddd;
+  z-index: 60;
+  float: left;
+}
+.customoverlay:nth-of-type(n) {
+  border: 0;
+  box-shadow: 0px 1px 2px #888;
+}
+.customoverlay a {
+  display: block;
+  text-decoration: none;
+  color: #000;
+  text-align: center;
+  border-radius: 6px;
+  font-size: 14px;
+  font-weight: bold;
+  overflow: hidden;
+  background: #d95050;
+  background: #d95050
+    url(https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/arrow_white.png)
+    no-repeat right 14px center;
+}
+.customoverlay .title {
+  display: block;
+  text-align: center;
+  background: #fff;
+  margin-right: 35px;
+  padding: 10px 15px;
+  font-size: 14px;
+  font-weight: bold;
+}
+.customoverlay:after {
+  content: "";
+  position: absolute;
+  margin-left: -12px;
+  left: 50%;
+  bottom: -12px;
+  width: 22px;
+  height: 12px;
+  background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
+}
 </style>

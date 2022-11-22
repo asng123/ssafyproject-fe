@@ -1,8 +1,9 @@
 <template>
-  <div id="footer">
+  <div id="footer" v-if="!isHome">
     <div id="nav">
       <div id="left">
-        <ul>2
+        <ul>
+          2
           <li @click.prevent="onClickquestionpage">고객센터</li>
         </ul>
       </div>
@@ -17,7 +18,12 @@
 
 <script>
 export default {
-  data: () => ({}),
+  data: () => ({
+    isHome: false,
+  }),
+  created() {
+    this.isHome = window.location.pathname === "/";
+  },
   methods: {
     onClickquestionpage() {
       this.$router.push({ name: "question" });
