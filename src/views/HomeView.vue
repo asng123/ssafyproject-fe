@@ -62,20 +62,21 @@
           </b-carousel>
         </div>
         <div>
-          <b-table 
-            stacked 
-            :items="houseDetailInfos" 
-            hover 
+          <b-table
+            stacked
+            :items="houseDetailInfos"
+            hover
             :per-page="perPage"
             :current-page="currentPage"
           ></b-table>
           <b-pagination
-          v-model="currentPage"
-          align="center"
-          pills :total-rows="rows"
-          :per-page="perPage"
-          size="sm"
-        ></b-pagination>
+            v-model="currentPage"
+            align="center"
+            pills
+            :total-rows="rows"
+            :per-page="perPage"
+            size="sm"
+          ></b-pagination>
         </div>
         <div>
           <div>근처 정보</div>
@@ -390,7 +391,7 @@ export default {
                     면적: area,
                     가격: `${dealAmount}원`,
                     "준공 년도": `${buildYear}년`,
-                    "거래일": `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
+                    거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
                   },
                 ];
               },
@@ -398,7 +399,6 @@ export default {
             );
           });
         });
-
       });
     },
     clickSide() {
@@ -569,5 +569,3 @@ export default {
   background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
 }
 </style>
-
-
