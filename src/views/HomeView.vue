@@ -78,21 +78,8 @@
             size="sm"
           ></b-pagination>
         </div>
-        <div>
-          <div>근처 정보</div>
-          <div id="mini_map">지도 위치</div>
-        </div>
-        <div>
-          <div>근처 정보</div>
-          <div id="mini_map">지도 위치</div>
-        </div>
-        <div>
-          <div>근처 정보</div>
-          <div id="mini_map">지도 위치</div>
-        </div>
-        <div>
-          <div>근처 정보</div>
-          <div id="mini_map">지도 위치</div>
+        <div style="padding: 10px" v-if="isHouseDetailRendered">
+          <trade-chart :houseDetailInfos="houseDetailInfos"></trade-chart>
         </div>
       </div>
       <!-- <div id="current">{{ currentAddress }}</div> -->
@@ -105,12 +92,10 @@
 import axios from "axios";
 import { getMapInfo, getHouseInfo, getHouseDetailInfo } from "@/api/map";
 import Side from "@/components/map/side.vue";
+import TradeChart from "@/components/chart/TradeChart.vue";
 
 export default {
-  name: "Home",
-  components: {
-    Side,
-  },
+  name: "HomeView",
   data() {
     return {
       perPage: 1,
@@ -130,18 +115,8 @@ export default {
       currentPrevAddress: "",
       dong: "",
       isSideOpen: false,
-      items: [
-        {
-          age: 40,
-          first_name: "Dickerson",
-          last_name: "Macdonald",
-          hi: "yeri",
-        },
-        { age: 21, first_name: "Larsen", last_name: "Shaw", hi: "yeri" },
-        { age: 89, first_name: "Geneva", last_name: "Wilson", hi: "yeri" },
-        { age: 38, first_name: "Jami", last_name: "Carney", hi: "yeri" },
-      ],
       houseDetailInfos: [],
+      isHouseDetailRendered: false,
     };
   },
   computed: {
@@ -152,6 +127,7 @@ export default {
   async created() {},
   components: {
     siderbar: () => import("@/components/details/sidebar"),
+    TradeChart,
   },
   methods: {
     focused() {
@@ -397,6 +373,7 @@ export default {
               },
               []
             );
+            this.isHouseDetailRendered = true;
           });
         });
       });
