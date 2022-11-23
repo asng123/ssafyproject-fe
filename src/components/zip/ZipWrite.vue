@@ -2,7 +2,7 @@
   <div id="main">
     <div id="submit_btn_container">
       <button class="btn" id="submit_btn" @click="submitBtnHandler">
-        <font-awesome-icon icon="fa-solid fa-circle-check" />
+        <font-awesome-icon icon="fa-solid fa-circle-check" size="3x" />
       </button>
     </div>
     <div id="write_container">
@@ -164,7 +164,8 @@ export default {
           ) => {
             console.log(category_name);
             if (category_name.includes("주거시설")) {
-              console.log("주소", address_name);
+              const temp = address_name.split(" ");
+              console.log("주소", temp);
               this.residentResults.push({
                 place_url,
                 place_name,
@@ -180,7 +181,7 @@ export default {
               return (
                 cur +
                 `
-              <div class="resident_items" data-x=${x} data-y=${y} data-place=${place_name}>${address_name} ${place_name}</div>
+              <div class="resident_items" data-x=${x} data-y=${y} data-place=${place_name} >${address_name} ${place_name}</div>
             `
               );
             }
@@ -350,8 +351,8 @@ export default {
 }
 #submit_btn_container {
   position: fixed;
-  bottom: 30px;
-  right: 30px;
+  bottom: 50px;
+  right: 50px;
   width: 40px;
   height: 40px;
 }
