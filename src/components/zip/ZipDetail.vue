@@ -24,8 +24,8 @@
           :blockcontent="block.blockcontent"
           :blocksummary="block.blocksummary"
           :index="index"
-          :lat="main.lat"
-          :lng="main.lng"
+          :lat="block.blocklat"
+          :lng="block.blocklng"
         ></zip-block-item>
       </div>
     </div>
@@ -73,7 +73,18 @@ export default {
         };
         console.log(this.main);
         this.blocks = data.zips.reduce(
-          (cur, { order, place, type, blockcontent, blocksummary }) => {
+          (
+            cur,
+            {
+              order,
+              place,
+              type,
+              blockcontent,
+              blocksummary,
+              blocklat,
+              blocklng,
+            }
+          ) => {
             if (place === null) return cur;
             return [
               ...cur,
@@ -83,6 +94,8 @@ export default {
                 type,
                 blockcontent,
                 blocksummary,
+                blocklat,
+                blocklng,
               },
             ];
           },
