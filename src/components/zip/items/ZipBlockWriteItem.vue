@@ -308,7 +308,7 @@ export default {
       };
       await addZipBlock(data)
         .then((res) => {
-          console.log(res);
+          this.$router.push({ name: "ziplist" });
         })
         .catch((err) => {
           console.log(err);

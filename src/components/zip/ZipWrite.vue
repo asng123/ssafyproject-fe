@@ -181,7 +181,7 @@ export default {
               return (
                 cur +
                 `
-              <div class="resident_items" data-x=${x} data-y=${y} data-place=${place_name} >${address_name} ${place_name}</div>
+              <div class="resident_items" data-x=${x} data-y=${y} data-place=${place_name} data-address="${address_name}" >${address_name} ${place_name}</div>
             `
               );
             }
@@ -202,8 +202,9 @@ export default {
               );
               const x = child.attributes["data-x"].value;
               const y = child.attributes["data-y"].value;
-              this.address = child.innerText;
+              this.address = child.attributes["data-address"].value;
               // this.address = child.attributes["data-address"].value;
+              console.log("da", child.attributes["data-address"].value);
               this.place = child.attributes["data-place"].value;
               this.introduceValue = this.address;
 
@@ -289,6 +290,7 @@ export default {
       }
     },
     deleteBlocks() {
+      // 블럭 삭제하기
       if (this.blockItemsLength > 0) {
         this.blockItemsLength -= 1;
       } else {

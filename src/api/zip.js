@@ -11,4 +11,17 @@ async function addZipBlock(data, success, fail) {
     .then(success)
     .catch(fail);
 }
-export { addZip, addZipBlock };
+
+async function getAllList(success, fail) {
+  console.log("get all list");
+  return await api.get("/zip/alllist").then(success).catch(fail);
+}
+
+async function getDetailZip(zid, success, fail) {
+  console.log("get zip ", zid);
+  const params = {
+    zid,
+  };
+  return await api.get("/zip/detail", params).then(success).catch(fail);
+}
+export { addZip, addZipBlock, getAllList };
