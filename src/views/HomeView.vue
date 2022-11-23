@@ -63,6 +63,7 @@
 <script>
 import axios from "axios";
 import { getMapInfo, getHouseInfos, getHouseDetailInfos } from "@/api/map";
+import { getAllList } from "@/api/zip";
 import Side from "@/components/map/side.vue";
 import TradeChart from "@/components/chart/TradeChart.vue";
 import { set } from "vue";
@@ -192,6 +193,7 @@ export default {
           console.log("doesnt has ", this.regCode);
           this.loadedRegion.add(this.regCode);
           this.findHouseDealInfo();
+          this.findnaezipInfo();
         } else {
           console.log("already has ", this.regCode);
         }
@@ -254,13 +256,112 @@ export default {
           this.houseInfoMarker(aptName, jibun, lat, lng);
         });
       });
-      console.log("finish");
+      console.log("findHouseDealInfo finish");
+    },
+    async findnaezipInfo() {
+      // 내집 소개 정보 가져오기
+
+      await getAllList()
+        .then(({ data }) => {
+          console.log("naezip res", data);
+          data.zips.forEach(({ aptname, lat, lng }) => {
+            this.naezipInfoMarker(aptname, lat, lng);
+          });
+        })
+        .catch((e) => {
+          console.log(
+            (this.hottest_message =
+              "불러오는데 서버에 에러가 있어요. 문의 부탁드립니다!")
+          );
+        });
+
+      console.log("findnaezipInfo finish");
+    },
+    naezipInfoMarker(aptname, lat, lng) {
+      console.log("naezip", aptname, lat, lng);
+      let coords = new kakao.maps.LatLng(lat, lng);
+      var imageSrc =
+          "https://cdn-user-icons.flaticon.com/85840/85840519/1669199751289.svg?token=exp=1669200652~hmac=3c09afb51cee3436e27afb52a9851d1c", // 마커이미지의 주소입니다
+        imageSize = new kakao.maps.Size(35, 35), // 마커이미지의 크기입니다
+        imageOption = { offset: new kakao.maps.Point(10, 30) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
+
+      // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+      var markerImage = new kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize,
+        imageOption
+      );
+
+      var marker = new kakao.maps.Marker({
+        map: this.map,
+        position: coords,
+        image: markerImage,
+      });
+
+      marker.setMap(this.map);
+      // 마커에 표시할 인포윈도우를 생성합니다
+      var infowindow = new kakao.maps.InfoWindow({
+        content: `<div class="infowindow">${aptname}</div>`, // 인포윈도우에 표시할 내용
+      });
+      let $this = this;
+      // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
+      // 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
+      (function (marker, infowindow) {
+        // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
+        kakao.maps.event.addListener(marker, "mouseover", function () {
+          infowindow.open($this.map, marker);
+        });
+
+        // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
+        kakao.maps.event.addListener(marker, "mouseout", function () {
+          infowindow.close();
+        });
+      })(marker, infowindow);
+
+      // 마커에 클릭이벤트를 등록합니다
+      // let regCode = this.regCode;
+      // kakao.maps.event.addListener(marker, "click", async (e) => {
+      //   this.isSideOpen = true;
+      //   document.querySelector("#address").innerHTML = this.currentAddress;
+      //   document.querySelector("#apartment_name").innerHTML = aptName;
+      //   await getHouseDetailInfos(regCode, aptName).then(({ data }) => {
+      //     this.houseDetailInfos = data.reduce(
+      //       (
+      //         cur,
+      //         {
+      //           apartmentName,
+      //           area,
+      //           buildYear,
+      //           dealAmount,
+      //           dealDay,
+      //           dealMonth,
+      //           dealYear,
+      //           floor,
+      //           jibun,
+      //           roadName,
+      //         }
+      //       ) => {
+      //         return [
+      //           ...cur,
+      //           {
+      //             층: floor,
+      //             면적: area,
+      //             가격: `${dealAmount}원`,
+      //             "준공 년도": `${buildYear}년`,
+      //             거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
+      //           },
+      //         ];
+      //       },
+      //       []
+      //     );
+      //     this.isHouseDetailRendered = true;
+      //   });
+      // });
     },
     houseInfoMarker(aptName, jibun, lat, lng) {
       console.log("ctl", aptName, jibun, lat, lng);
       let coords = new kakao.maps.LatLng(lat, lng);
-      var imageSrc =
-          "https://cdn.icon-icons.com/icons2/1859/PNG/512/apartment_117972.png", // 마커이미지의 주소입니다
+      var imageSrc = "https://cdn-icons-png.flaticon.com/512/2213/2213900.png", // 마커이미지의 주소입니다
         imageSize = new kakao.maps.Size(35, 35), // 마커이미지의 크기입니다
         imageOption = { offset: new kakao.maps.Point(10, 30) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
