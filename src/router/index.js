@@ -124,6 +124,11 @@ const routes = [
         name: "zipwrite",
         component: () => import("@/components/zip/ZipWrite"),
       },
+      {
+        path: "view/:zid",
+        name: "zipdetailview",
+        component: () => import("@/components/zip/ZipDetail"),
+      },
     ],
   },
 ];
