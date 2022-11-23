@@ -108,6 +108,13 @@ export default {
   computed: {
     ...mapState(memberStore, ["isLogin", "userInfo"]),
   },
+  created() {
+    console.log(this.isLogin, this.userInfo);
+    if (!this.userInfo) {
+      alert("로그인이 필요합니다.");
+      this.$router.push({ name: "Login" });
+    }
+  },
   methods: {
     initMap() {
       if (window.kakao && window.kakao.maps) {
@@ -289,16 +296,32 @@ export default {
     },
     async submitBtnHandler() {
       console.log("clicked");
+      if (!this.userInfo) {
+        alert("로그인이 필요합니다.");
+
+        this.$router.push({ name: "Login" });
+        return;
+      }
+      if (!this.regCode) {
+        return alert("소개할 집을 선택해주세요!");
+      }
+      if (!this.subtitleVal) {
+        return alert("소개할 집을 간단하게 소개해주세요!");
+      }
+      if (!this.wantedPrice) {
+        return alert("소개할 집의 가격을 정해주세요!");
+      }
       const date = Date.now();
       const data = {
         zid: `${this.userInfo.uid}${date}`,
         uid: this.userInfo.uid,
         address: this.address,
-        place: this.place,
+        aptname: this.place,
         price: Number(this.wantedPrice),
         lat: this.current.lat,
         lng: this.current.lng,
         content: this.subtitleVal,
+        regcode: this.regCode,
       };
       console.log("s", this.zId);
       await addZip(data)

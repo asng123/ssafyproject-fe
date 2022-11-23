@@ -274,6 +274,12 @@ export default {
   watch: {
     async zId() {
       console.log("change zid");
+      if (!this.place) {
+        return alert(`소개할 ${this.type}을 선택해주세요!`);
+      }
+      if (!this.content) {
+        return alert(`소개할 ${this.type}을 간단하게 소개해주세요!`);
+      }
       console.log(this.zId);
       const data = {
         address: this.address,
