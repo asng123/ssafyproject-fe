@@ -274,107 +274,86 @@ export default {
         });
       });
       console.log("finish");
-      this.addHouseInfoEventListener();
     },
     houseInfoMarker(aptName, jibun, lat, lng) {
       console.log("ctl", aptName, jibun, lat, lng);
       let coords = new kakao.maps.LatLng(lat, lng);
-      var content =
-        `<div class="customoverlay house_info_marker" data-aptName=${aptName} data-dongCode=${this.regCode}>` +
-        `    <span class="title"> ${aptName} </span>` +
-        "</div>";
-      // '<div class="customoverlay">' +
-      // '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
-      // `    <span class="title"> ${aptName} </span>` +
-      // "  </a>" +
-      // "</div>";
+      var imageSrc =
+          "https://cdn.icon-icons.com/icons2/1859/PNG/512/apartment_117972.png", // 마커이미지의 주소입니다
+        imageSize = new kakao.maps.Size(23, 25), // 마커이미지의 크기입니다
+        imageOption = { offset: new kakao.maps.Point(10, 30) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
-      var customOverlay = new kakao.maps.CustomOverlay({
+      // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
+      var markerImage = new kakao.maps.MarkerImage(
+        imageSrc,
+        imageSize,
+        imageOption
+      );
+
+      var marker = new kakao.maps.Marker({
         map: this.map,
         position: coords,
-        content: content,
-        yAnchor: 1,
+        image: markerImage,
       });
 
-      customOverlay.setMap(this.map);
-      // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-      // this.geocoder.addressSearch(address, (result, status) => {
-      //   if (status === kakao.maps.services.Status.OK) {
-      //     let coords = new kakao.maps.LatLng(result[0].y, result[0].x);
-      //     console.log(coords); // 변환된 자표
+      marker.setMap(this.map);
+      // 마커에 표시할 인포윈도우를 생성합니다
+      var infowindow = new kakao.maps.InfoWindow({
+        content: `<div>${aptName}</div>`, // 인포윈도우에 표시할 내용
+      });
+      let $this = this;
+      // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
+      // 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
+      (function (marker, infowindow) {
+        // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
+        kakao.maps.event.addListener(marker, "mouseover", function () {
+          infowindow.open($this.map, marker);
+        });
 
-      //     // 결과값으로 받은 위치를 마커로 표시합니다
-      //     // var marker = new kakao.maps.Marker({
-      //     //   map: this.map,
-      //     //   position: coords,
-      //     //   // image: markerImage,
-      //     // });
+        // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
+        kakao.maps.event.addListener(marker, "mouseout", function () {
+          infowindow.close();
+        });
+      })(marker, infowindow);
 
-      //     var content =
-      //       '<div class="customoverlay">' +
-      //       '  <a href="https://map.kakao.com/link/map/11394059" target="_blank">' +
-      //       `    <span class="title"> ${apartname} </span>` +
-      //       "  </a>" +
-      //       "</div>";
-      //     var customOverlay = new kakao.maps.CustomOverlay({
-      //       map: this.map,
-      //       position: coords,
-      //       content: content,
-      //       yAnchor: 1,
-      //     });
-
-      //     customOverlay.setMap(this.map);
-      //     // 지도의 중심을 결과값으로 받은 위치로 이동시킵니다
-      //   } else {
-      //     console.log("not okay");
-      //   }
-      // });
-    },
-    addHouseInfoEventListener() {
-      document.querySelectorAll(".house_info_marker").forEach((node) => {
-        node.addEventListener("click", async (e) => {
-          console.log("click", e);
-          this.isSideOpen = true;
-          const aptName = node.attributes["data-aptname"].value;
-          const dong = node.attributes["data-dongCode"].value;
-          console.log(dong, aptName);
-          document.querySelector("#apartment_name").innerHTML = aptName;
-          // this.makeMap();
-          await getHouseDetailInfo(dong, aptName).then(({ data }) => {
-            console.log(data);
-            this.houseDetailInfos = data.reduce(
-              (
-                cur,
+      // 마커에 클릭이벤트를 등록합니다
+      let regCode = this.regCode;
+      kakao.maps.event.addListener(marker, "click", async (e) => {
+        this.isSideOpen = true;
+        document.querySelector("#apartment_name").innerHTML = aptName;
+        await getHouseDetailInfo(regCode, aptName).then(({ data }) => {
+          this.houseDetailInfos = data.reduce(
+            (
+              cur,
+              {
+                apartmentName,
+                area,
+                buildYear,
+                dealAmount,
+                dealDay,
+                dealMonth,
+                dealYear,
+                floor,
+                jibun,
+                roadName,
+              }
+            ) => {
+              return [
+                ...cur,
                 {
-                  apartmentName,
-                  area,
-                  buildYear,
-                  dealAmount,
-                  dealDay,
-                  dealMonth,
-                  dealYear,
-                  floor,
-                  jibun,
-                  roadName,
-                }
-              ) => {
-                return [
-                  ...cur,
-                  {
-                    아파트: apartmentName,
-                    주소: `${roadName} ${jibun}`,
-                    층: floor,
-                    면적: area,
-                    가격: `${dealAmount}원`,
-                    "준공 년도": `${buildYear}년`,
-                    거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
-                  },
-                ];
-              },
-              []
-            );
-            this.isHouseDetailRendered = true;
-          });
+                  아파트: apartmentName,
+                  주소: `${roadName} ${jibun}`,
+                  층: floor,
+                  면적: area,
+                  가격: `${dealAmount}원`,
+                  "준공 년도": `${buildYear}년`,
+                  거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
+                },
+              ];
+            },
+            []
+          );
+          this.isHouseDetailRendered = true;
         });
       });
     },
