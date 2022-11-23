@@ -1,9 +1,14 @@
 <template>
   <div id="main">
+    <div id="submit_btn_container">
+      <button id="submit_btn" @click="submitBtnHandler">
+        <font-awesome-icon icon="fa-solid fa-circle-check" />
+      </button>
+    </div>
     <div id="write_container">
       <div class="section" id="write_section">
         <div class="form">
-          <div id="search_bar">
+          <div class="search_bar">
             <!-- <input
             type="text"
             v-model="subtitleVal"
@@ -26,7 +31,7 @@
           </div>
           <div class="map_section">
             <div id="map" class="maps"></div>
-            <div id="list" class="lists"></div>
+            <div id="list" class="lists" v-show="isListOpen"></div>
           </div>
           <div v-show="isResident">
             {{ this.introduceValue }}
@@ -47,11 +52,14 @@
           </div>
         </div>
       </div>
-      <div id="blocks">
+      <div id="blocks" v-show="blockItemsLength != 0">
         <zip-block-write-item
           v-for="index in blockItemsLength"
           :key="index"
           :index="index"
+          :dong="dong"
+          :zId="zId"
+          @deleteBlocks="deleteBlocks"
         ></zip-block-write-item>
       </div>
       <div class="section" id="makeBtn">
@@ -64,8 +72,10 @@
 </template>
 
 <script>
-import { getHouseDetailInfo } from "@/api/map";
+import { addZip } from "@/api/zip";
 import ZipBlockWriteItem from "@/components/zip/items/ZipBlockWriteItem";
+import { mapState, mapGetters, mapActions } from "vuex";
+const memberStore = "memberStore";
 export default {
   name: "ZipWrite",
   data() {
@@ -79,12 +89,14 @@ export default {
       geocoder: null,
       searchPlaceholder: "주거 시설을 검색해주세요.",
       isResident: false,
+      isListOpen: false,
       dong: "",
       regCode: "",
       residentResults: [],
       introduceValue: "",
       curIntroduceMarker: null,
-      blockItemsLength: 1,
+      blockItemsLength: 0,
+      zId: "",
     };
   },
   mounted() {
@@ -92,6 +104,9 @@ export default {
   },
   components: {
     ZipBlockWriteItem,
+  },
+  computed: {
+    ...mapState(memberStore, ["isLogin", "userInfo"]),
   },
   methods: {
     initMap() {
@@ -127,7 +142,7 @@ export default {
       if (this.marker) this.marker.setMap(null);
       this.ps.keywordSearch(this.searchValue, this.placesSearchCB);
     },
-    placesSearchCB(data, status, pagination) {
+    placesSearchCB(data, status) {
       if (status === kakao.maps.services.Status.OK) {
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다
@@ -142,7 +157,7 @@ export default {
           ) => {
             console.log(category_name);
             if (category_name.includes("주거시설")) {
-              console.log("주거시설~");
+              console.log("주소", address_name);
               this.residentResults.push({
                 place_url,
                 place_name,
@@ -158,7 +173,7 @@ export default {
               return (
                 cur +
                 `
-              <div class="resident_items" data-x=${x} data-y=${y} data-aptName=${place_name}>${address_name} ${place_name}</div>
+              <div class="resident_items" data-x=${x} data-y=${y} data-place=${place_name}>${address_name} ${place_name}</div>
             `
               );
             }
@@ -170,6 +185,7 @@ export default {
           const list = document.querySelector("#list");
           list.innerHTML = listDiv;
           console.log(list.childNodes);
+          this.isListOpen = true;
           list.childNodes.forEach((child) => {
             child.addEventListener("click", () => {
               console.log(
@@ -178,7 +194,10 @@ export default {
               );
               const x = child.attributes["data-x"].value;
               const y = child.attributes["data-y"].value;
-              this.introduceValue = child.attributes["data-aptName"].value;
+              this.address = child.innerText;
+              // this.address = child.attributes["data-address"].value;
+              this.place = child.attributes["data-place"].value;
+              this.introduceValue = this.address;
 
               var bounds = new kakao.maps.LatLngBounds();
               bounds.extend(new kakao.maps.LatLng(y, x));
@@ -190,6 +209,10 @@ export default {
               this.displayMarker({ y, x });
               // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
               this.map.setBounds(bounds);
+              this.map.relayout();
+              this.map.setCenter(
+                new kakao.maps.LatLng(this.current.lat, this.current.lng)
+              );
             });
           });
         } else {
@@ -225,7 +248,7 @@ export default {
           }
         }
         console.log("sc", this.regCode);
-        this.getRecentPrice();
+        // this.getRecentPrice(); => 가장 최근 가격
       } else {
         this.currentAddress = "실패";
       }
@@ -247,7 +270,47 @@ export default {
       );
     },
     clickMakeBtn() {
-      this.blockItemsLength += 1;
+      if (this.dong === "") {
+        alert("소개하실 집부터 골라주세요!");
+        return;
+      }
+      if (this.blockItemsLength < 5) {
+        this.blockItemsLength += 1;
+      } else {
+        alert("더 이상 블럭 추가가 어려워요!");
+      }
+    },
+    deleteBlocks() {
+      if (this.blockItemsLength > 0) {
+        this.blockItemsLength -= 1;
+      } else {
+        alert("더 이상 삭제할 블럭이 없습니다.");
+      }
+    },
+    async submitBtnHandler() {
+      console.log("clicked");
+      const date = Date.now();
+      const data = {
+        zid: `${this.userInfo.uid}${date}`,
+        uid: this.userInfo.uid,
+        address: this.address,
+        place: this.place,
+        price: Number(this.wantedPrice),
+        lat: this.current.lat,
+        lng: this.current.lng,
+        content: this.subtitleVal,
+      };
+      console.log("s", this.zId);
+      await addZip(data)
+        .then((res) => {
+          console.log(res);
+          this.zId = `${this.userInfo.uid}${date}`;
+        })
+        .catch((err) => {
+          console.log(err);
+          this.zId = `${this.userInfo.uid}${date}`;
+          console.log("change ㅋzzzid", this.zId);
+        });
     },
   },
 };
@@ -260,12 +323,28 @@ export default {
   flex-direction: column;
   justify-content: center;
   align-items: center;
+  padding-bottom: 70px;
+}
+#submit_btn_container {
+  position: fixed;
+  bottom: 30px;
+  right: 30px;
+  width: 40px;
+  height: 40px;
+}
+#submit_btn_container #submit_btn {
+  width: 100%;
+  height: 100%;
 }
 #write_container {
   width: 50%;
+  min-width: 450px;
+  margin-top: 50px;
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
 }
 #write_section {
-  margin-top: 50px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
@@ -278,12 +357,11 @@ export default {
 .section {
   width: 100%;
   padding: 50px 0;
-  margin-top: 50px;
   border-radius: 10px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  justify-content: center;
+  justify-content: space-between;
   background: #f8f8f8;
   box-shadow: 0px 0px 250px 14px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
@@ -297,33 +375,34 @@ export default {
   justify-content: center;
   gap: 30px;
 }
-#search_bar {
+.search_bar {
   height: 5vh;
 }
-#search_bar form {
+.search_bar form {
   display: flex;
   justify-content: space-between;
 }
-#search_bar form #search {
+.search_bar form #search {
   height: 5vh;
   width: 80%;
   border-radius: 10px 0 0 10px;
 }
-#search_bar form #search:focus {
+.search_bar form #search:focus {
   border: 0;
 }
-#search_bar form #submit_btn {
+.search_bar form #submit_btn {
   width: 20%;
   border-style: none;
   background: black;
   border-radius: 0 10px 10px 0;
 }
-#search_bar form #submit_btn #submit_btn_icon {
+.search_bar form #submit_btn #submit_btn_icon {
   color: $main;
 }
 .map_section {
   height: 200px;
   display: flex;
+  gap: 10px;
 }
 .map_section .maps {
   width: 100%;
@@ -341,6 +420,7 @@ export default {
   background: $main;
 }
 input,
+textarea,
 #focus {
   border: none;
   border-right: 0px;
@@ -352,11 +432,17 @@ input,
   display: block;
 }
 input:focus,
+textarea:focus,
 #search:focus {
   border: none;
   outline: none;
   border-bottom: 1px solid $main;
   transition: border-bottom 1s;
+}
+#blocks {
+  display: flex;
+  flex-direction: column;
+  gap: 50px;
 }
 #makeBtn:hover {
   border: 2px solid $main;

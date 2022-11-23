@@ -1,15 +1,18 @@
 <template>
   <div class="section">
     {{ index }}
+    <button @click.prevent="clickCancle">
+      <font-awesome-icon icon="fa-solid fa-xmark" />
+    </button>
     <div>
-      <select v-model="selectedType">
+      <select v-model="selectedType" @change="handleChangeSelect">
         <option v-for="(type, index) in types" :key="index" :value="type.key">
           {{ type.value }}
         </option>
       </select>
     </div>
     <div class="form">
-      <div id="search_bar">
+      <div class="search_bar">
         <!-- <input
             type="text"
             v-model="subtitleVal"
@@ -39,16 +42,17 @@
       </div>
     </div>
     <div>
-      <input
+      <textarea
         type="text"
         v-model="content"
-        placeholder="간단하게 소개해주세요!"
-      />
+        placeholder="소개해주세요!"
+      ></textarea>
     </div>
   </div>
 </template>
 
 <script>
+import { addZipBlock } from "@/api/zip";
 export default {
   name: "ZipBlockWriteItem",
   data() {
@@ -60,9 +64,9 @@ export default {
       map: null, // 지도
       ps: null, // 장소 검색
       geocoder: null,
-      searchPlaceholder: "주거 시설을 검색해주세요.",
+      searchPlaceholder: "학교 검색해주세요.",
       isType: false,
-      dong: "",
+      type: "학교",
       regCode: "",
       residentResults: [],
       introduceValue: "",
@@ -78,11 +82,16 @@ export default {
       selectedType: "SC4",
       placeName: "",
       content: "",
+      address: "",
+      place: "",
     };
   },
   props: {
     index: Number,
+    dong: String,
+    zId: String,
   },
+  created() {},
   mounted() {
     this.initMap();
   },
@@ -117,9 +126,12 @@ export default {
     },
     getSearchResult() {
       // 검색 결과
-      console.log("search", this.searchValue);
+      console.log("search", `${this.dong} ${this.searchValue}`);
       if (this.marker) this.marker.setMap(null);
-      this.ps.keywordSearch(this.searchValue, this.placesSearchCB);
+      this.ps.keywordSearch(
+        `${this.dong} ${this.searchValue}`,
+        this.placesSearchCB
+      );
     },
     placesSearchCB(data, status, pagination) {
       if (status === kakao.maps.services.Status.OK) {
@@ -161,7 +173,7 @@ export default {
               return (
                 cur +
                 `
-            <div class="resident_items" data-x=${x} data-y=${y} data-placeName=${place_name}>${address_name} ${place_name}</div>
+            <div class="resident_items" data-x=${x} data-y=${y} data-place=${place_name}>${address_name} ${place_name}</div>
           `
               );
             }
@@ -181,7 +193,11 @@ export default {
               );
               const x = child.attributes["data-x"].value;
               const y = child.attributes["data-y"].value;
-              this.introduceValue = child.attributes["data-placeName"].value;
+
+              this.address = child.innerText;
+              // this.address = child.attributes["data-address"].value;
+              this.place = child.attributes["data-place"].value;
+              this.introduceValue = this.address;
 
               var bounds = new kakao.maps.LatLngBounds();
               bounds.extend(new kakao.maps.LatLng(y, x));
@@ -193,6 +209,10 @@ export default {
               this.displayMarker({ y, x });
               // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
               this.map.setBounds(bounds);
+              this.map.relayout();
+              this.map.setCenter(
+                new kakao.maps.LatLng(this.current.lat, this.current.lng)
+              );
             });
           });
         } else {
@@ -220,7 +240,6 @@ export default {
             this.currentAddress = result[i].address_name;
             const temp = this.currentAddress.split(" ");
             this.currentPrevAddress = `${temp[0]} ${temp[1]}`;
-            this.dong = temp[2];
             console.log(result[i].code);
             this.regCode = result[i].code;
 
@@ -239,6 +258,39 @@ export default {
         map: this.map,
         position: new kakao.maps.LatLng(place.y, place.x),
       });
+    },
+    handleChangeSelect() {
+      console.log("selected ", this.selectedType);
+      this.type = this.types.filter(
+        (type) => type.key === this.selectedType
+      )[0].value;
+      this.searchPlaceholder = `${this.type} 검색해주세요!`;
+    },
+    clickCancle() {
+      console.log("delete");
+      this.$emit("deleteBlocks");
+    },
+  },
+  watch: {
+    async zId() {
+      console.log("change zid");
+      console.log(this.zId);
+      const data = {
+        address: this.address,
+        content: this.content,
+        order: this.index,
+        place: this.place,
+        type: this.type,
+        zbid: `${this.zId}_${this.index}`,
+        zid: this.zId,
+      };
+      await addZipBlock(data)
+        .then((res) => {
+          console.log(res);
+        })
+        .catch((err) => {
+          console.log(err);
+        });
     },
   },
 };
