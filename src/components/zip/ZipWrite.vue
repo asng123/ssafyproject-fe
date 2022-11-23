@@ -11,7 +11,7 @@
           <div class="search_bar">
             <!-- <input
             type="text"
-            v-model="subtitleVal"
+            v-model="summary"
             placeholder="무엇을 하이아닐;ㄴ?"
           /> -->
             <form action="">
@@ -39,9 +39,16 @@
           <div>
             <input
               type="text"
-              v-model="subtitleVal"
+              v-model="summary"
               placeholder="간단하게 소개해주세요!"
             />
+          </div>
+          <div>
+            <textarea
+              type="text"
+              v-model="content"
+              placeholder="소개해주세요!"
+            ></textarea>
           </div>
           <div>
             <input
@@ -81,7 +88,8 @@ export default {
   data() {
     return {
       searchValue: "", // 검색
-      subtitleVal: "", // 제목
+      summary: "", // 요약
+      content: "", //내용
       wantedPrice: null, // 가격
       current: { lat: 37.5, lng: 127.039 },
       map: null, // 지도
@@ -308,7 +316,7 @@ export default {
       if (!this.regCode) {
         return alert("소개할 집을 선택해주세요!");
       }
-      if (!this.subtitleVal) {
+      if (!this.summary) {
         return alert("소개할 집을 간단하게 소개해주세요!");
       }
       if (!this.wantedPrice) {
@@ -323,7 +331,8 @@ export default {
         price: Number(this.wantedPrice),
         lat: this.current.lat,
         lng: this.current.lng,
-        content: this.subtitleVal,
+        summary: this.summary,
+        content: this.content,
         regcode: this.regCode,
       };
       console.log("s", this.zId);

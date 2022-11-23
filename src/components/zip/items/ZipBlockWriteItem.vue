@@ -58,6 +58,13 @@
       </div>
     </div>
     <div>
+      <input
+        type="text"
+        v-model="summary"
+        placeholder="간단하게 소개해주세요!"
+      />
+    </div>
+    <div>
       <textarea
         type="text"
         v-model="content"
@@ -74,7 +81,8 @@ export default {
   data() {
     return {
       searchValue: "", // 검색
-      subtitleVal: "", // 제목
+      summary: "", // 요약
+      content: "", // 내용
       wantedPrice: null, // 가격
       current: { lat: 37.5, lng: 127.039 },
       map: null, // 지도
@@ -97,9 +105,10 @@ export default {
       ],
       selectedType: "SC4",
       placeName: "",
-      content: "",
       address: "",
       place: "",
+      lat: 0,
+      lng: 0,
     };
   },
   props: {
@@ -209,7 +218,8 @@ export default {
               );
               const x = child.attributes["data-x"].value;
               const y = child.attributes["data-y"].value;
-
+              this.lng = x;
+              this.lat = y;
               this.address = child.innerText;
               // this.address = child.attributes["data-address"].value;
               this.place = child.attributes["data-place"].value;
@@ -305,6 +315,9 @@ export default {
         type: this.type,
         zbid: `${this.zId}_${this.index}`,
         zid: this.zId,
+        summary: this.summary,
+        lat: this.current.lat,
+        lng: this.current.lng,
       };
       await addZipBlock(data)
         .then((res) => {
