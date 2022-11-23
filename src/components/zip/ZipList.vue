@@ -11,6 +11,7 @@
             :zid="zip.zid"
             :address="zip.address"
             :aptname="zip.aptname"
+            :summary="zip.summary"
             :content="zip.content"
             :price="zip.price"
             :regcode="zip.regcode"

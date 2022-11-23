@@ -9,7 +9,7 @@
     </div>
     <div class="intro_container">
       <div class="info_section">
-        <div class="intro_content">{{ content }}</div>
+        <div class="intro_content">{{ summary }}</div>
         <div class="intro_aptname">{{ aptname }}</div>
       </div>
       <div class="price_section">
@@ -26,6 +26,7 @@ export default {
     zid: String,
     address: String,
     aptname: String,
+    summary: String,
     content: String,
     price: Number,
     regcode: String,
