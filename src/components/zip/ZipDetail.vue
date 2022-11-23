@@ -1,7 +1,23 @@
 <template>
   <div id="main">
     <div id="section">
-      <div class="container" id="main_container"></div>
+      <div class="container" id="main_container">
+        <div>{{ main.content }}</div>
+        <div>{{ main.aptname }}</div>
+        <div>{{ main.address }}</div>
+        <div>{{ main.price }}</div>
+      </div>
+      <div
+        class="container block_container"
+        v-for="(block, index) in blocks"
+        :key="index"
+      >
+        <div>{{ block.type }}</div>
+        <div>
+          {{ block.place }}
+        </div>
+        <div>{{ block.blockcontent }}</div>
+      </div>
     </div>
   </div>
 </template>

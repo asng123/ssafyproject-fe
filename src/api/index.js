@@ -31,4 +31,15 @@ function mapInstance() {
   });
   return instance;
 }
-export { apiInstance, houseInstance, mapInstance };
+
+function kakaoInstance() {
+  const instance = axios.create({
+    baseURL: "https://dapi.kakao.com/v2/search",
+    headers: {
+      "Content-Type": "application/json;charset=utf-8",
+      Authorization: "KakaoAK 8ab0b8e030c6ca81a54254404ad89b94",
+    },
+  });
+  return instance;
+}
+export { apiInstance, houseInstance, mapInstance, kakaoInstance };
