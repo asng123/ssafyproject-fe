@@ -1,15 +1,31 @@
 <template>
   <div class="section">
-    {{ index }}
-    <button @click.prevent="clickCancle">
-      <font-awesome-icon icon="fa-solid fa-xmark" />
-    </button>
-    <div>
-      <select v-model="selectedType" @change="handleChangeSelect">
-        <option v-for="(type, index) in types" :key="index" :value="type.key">
-          {{ type.value }}
-        </option>
-      </select>
+    <div class="section_header">
+      <div class="left_header">
+        <div class="index_container">#{{ index }}</div>
+        <div>
+          <select
+            class="dropdown"
+            v-model="selectedType"
+            @change="handleChangeSelect"
+          >
+            <option
+              v-for="(type, index) in types"
+              :key="index"
+              :value="type.key"
+            >
+              {{ type.value }}
+            </option>
+          </select>
+        </div>
+      </div>
+      <div class="right_header">
+        <div>
+          <button class="delete_btn btn" @click.prevent="clickCancle">
+            <font-awesome-icon icon="fa-solid fa-xmark" />
+          </button>
+        </div>
+      </div>
     </div>
     <div class="form">
       <div class="search_bar">
@@ -302,4 +318,50 @@ export default {
 };
 </script>
 
-<style scoped lang="scss"></style>
+<style scoped lang="scss">
+.section_header {
+  height: 30px;
+  display: flex;
+  justify-content: space-between;
+}
+.section_header .left_header {
+  display: flex;
+  gap: 20px;
+}
+.section_header .left_header > * {
+  height: 100%;
+}
+.index_container {
+  font-size: 20px;
+}
+select {
+  height: 100%;
+}
+.section_header .right_header > * {
+  height: 100%;
+}
+.section_header .right_header .delete_btn {
+  width: 30px;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+  background: transparent;
+}
+.section_header .right_header .delete_btn:hover {
+  border: 1px solid $main;
+}
+select {
+  border-radius: 10px;
+  border: 0;
+  border-bottom: 1px solid rgba(0, 0, 0, 0.19);
+
+  padding: 0 10px;
+  background: #f8f8f8;
+}
+select:hover {
+  border: 1px solid $main;
+}
+option:hover {
+}
+</style>

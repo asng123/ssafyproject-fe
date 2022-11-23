@@ -1,7 +1,7 @@
 <template>
   <div id="main">
     <div id="submit_btn_container">
-      <button id="submit_btn" @click="submitBtnHandler">
+      <button class="btn" id="submit_btn" @click="submitBtnHandler">
         <font-awesome-icon icon="fa-solid fa-circle-check" />
       </button>
     </div>
@@ -63,7 +63,7 @@
         ></zip-block-write-item>
       </div>
       <div class="section" id="makeBtn">
-        <button id="makeSection" @click.prevent="clickMakeBtn">
+        <button class="btn" id="makeSection" @click.prevent="clickMakeBtn">
           <font-awesome-icon icon="fa-solid fa-circle-plus" />
         </button>
       </div>
@@ -95,7 +95,7 @@ export default {
       residentResults: [],
       introduceValue: "",
       curIntroduceMarker: null,
-      blockItemsLength: 0,
+      blockItemsLength: 1,
       zId: "",
     };
   },
@@ -367,16 +367,6 @@ export default {
   flex-direction: column;
   gap: 50px;
 }
-#write_section {
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #f8f8f8;
-  box-shadow: 0px 0px 250px 14px rgba(0, 0, 0, 0.25);
-  border-radius: 50px;
-}
 .section {
   width: 100%;
   padding: 50px 0;
@@ -385,6 +375,7 @@ export default {
   flex-direction: column;
   align-items: center;
   justify-content: space-between;
+  gap: 30px;
   background: #f8f8f8;
   box-shadow: 0px 0px 250px 14px rgba(0, 0, 0, 0.25);
   border-radius: 50px;
@@ -431,7 +422,7 @@ export default {
   width: 100%;
   height: 100%;
 }
-.map_section .list {
+.map_section .lists {
   overflow: scroll;
 }
 .map_section .resident_items {
@@ -470,5 +461,13 @@ textarea:focus,
 #makeBtn:hover {
   border: 2px solid $main;
   transition: border 0.3s;
+}
+button.btn {
+  width: 100%;
+  height: 100%;
+  border: 0;
+  outline: 0;
+  border-radius: 10px;
+  background: transparent;
 }
 </style>
