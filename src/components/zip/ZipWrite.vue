@@ -103,7 +103,7 @@ export default {
       residentResults: [],
       introduceValue: "",
       curIntroduceMarker: null,
-      blockItemsLength: 1,
+      blockItemsLength: 0,
       zId: "",
     };
   },
@@ -340,6 +340,9 @@ export default {
         .then((res) => {
           console.log(res);
           this.zId = `${this.userInfo.uid}${date}`;
+          if (this.blockItemsLength == 0) {
+            this.$router.push({ name: "ziplist" });
+          }
         })
         .catch((err) => {
           console.log(err);

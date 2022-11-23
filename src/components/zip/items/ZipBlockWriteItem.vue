@@ -84,7 +84,6 @@ export default {
       summary: "", // 요약
       content: "", // 내용
       wantedPrice: null, // 가격
-      current: { lat: 37.5, lng: 127.039 },
       map: null, // 지도
       ps: null, // 장소 검색
       geocoder: null,
@@ -107,8 +106,8 @@ export default {
       placeName: "",
       address: "",
       place: "",
-      lat: 0,
-      lng: 0,
+      lat: 37.5,
+      lng: 127.039,
     };
   },
   props: {
@@ -136,7 +135,7 @@ export default {
       const mapContainer = document.querySelector(`#map${this.index}`);
       console.log("item", mapContainer);
       const mapOption = {
-        center: new kakao.maps.LatLng(this.current.lat, this.current.lng),
+        center: new kakao.maps.LatLng(this.lat, this.lng),
         level: 4,
       };
       this.map = new kakao.maps.Map(mapContainer, mapOption);
@@ -228,17 +227,15 @@ export default {
               var bounds = new kakao.maps.LatLngBounds();
               bounds.extend(new kakao.maps.LatLng(y, x));
               place = { y, x };
-
-              this.current.lng = x;
-              this.current.lat = y;
-              this.searchAddrFromCoords(this.current, this.getAddressFromRes);
+              this.searchAddrFromCoords(
+                { lat: this.lat, lng: this.lng },
+                this.getAddressFromRes
+              );
               this.displayMarker({ y, x });
               // 검색된 장소 위치를 기준으로 지도 범위를 재설정합니다
               this.map.setBounds(bounds);
               this.map.relayout();
-              this.map.setCenter(
-                new kakao.maps.LatLng(this.current.lat, this.current.lng)
-              );
+              this.map.setCenter(new kakao.maps.LatLng(this.lat, this.lng));
             });
           });
         } else {
@@ -306,26 +303,30 @@ export default {
       if (!this.content) {
         return alert(`소개할 ${this.type}을 간단하게 소개해주세요!`);
       }
-      console.log(this.zId);
-      const data = {
-        address: this.address,
-        content: this.content,
-        order: this.index,
-        place: this.place,
-        type: this.type,
-        zbid: `${this.zId}_${this.index}`,
-        zid: this.zId,
-        summary: this.summary,
-        lat: this.current.lat,
-        lng: this.current.lng,
-      };
-      await addZipBlock(data)
-        .then((res) => {
-          this.$router.push({ name: "ziplist" });
-        })
-        .catch((err) => {
-          console.log(err);
-        });
+      if (this.zId) {
+        console.log(this.zId);
+        const data = {
+          address: this.address,
+          content: this.content,
+          order: this.index,
+          place: this.place,
+          type: this.type,
+          zbid: `${this.zId}_${this.index}`,
+          zid: this.zId,
+          summary: this.summary,
+          lat: this.lat,
+          lng: this.lng,
+        };
+        await addZipBlock(data)
+          .then((res) => {
+            this.$router.push({ name: "ziplist" });
+          })
+          .catch((err) => {
+            console.log(err);
+          });
+      } else {
+        this.$router.push({ name: "ziplist" });
+      }
     },
   },
 };
