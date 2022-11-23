@@ -1,73 +1,56 @@
 <template>
-  <div id="main">
-    <div id="write_container">
-      <div class="section" id="write_section">
-        <div class="form">
-          <div id="search_bar">
-            <!-- <input
+  <div class="section">
+    {{ index }}
+    <div>
+      <select v-model="selectedType">
+        <option v-for="(type, index) in types" :key="index" :value="type.key">
+          {{ type.value }}
+        </option>
+      </select>
+    </div>
+    <div class="form">
+      <div id="search_bar">
+        <!-- <input
             type="text"
             v-model="subtitleVal"
             placeholder="무엇을 하이아닐;ㄴ?"
           /> -->
-            <form action="">
-              <b-form-input
-                id="search"
-                v-model="searchValue"
-                autocomplete="off"
-                :placeholder="searchPlaceholder"
-              ></b-form-input>
-              <button id="submit_btn" @click.prevent="getSearchResult">
-                <font-awesome-icon
-                  id="submit_btn_icon"
-                  icon="fa-solid fa-magnifying-glass"
-                />
-              </button>
-            </form>
-          </div>
-          <div class="map_section">
-            <div id="map" class="maps"></div>
-            <div id="list" class="lists"></div>
-          </div>
-          <div v-show="isResident">
-            {{ this.introduceValue }}
-          </div>
-          <div>
-            <input
-              type="text"
-              v-model="subtitleVal"
-              placeholder="간단하게 소개해주세요!"
+        <form action="">
+          <b-form-input
+            id="search"
+            v-model="searchValue"
+            autocomplete="off"
+            :placeholder="searchPlaceholder"
+          ></b-form-input>
+          <button id="submit_btn" @click.prevent="getSearchResult">
+            <font-awesome-icon
+              id="submit_btn_icon"
+              icon="fa-solid fa-magnifying-glass"
             />
-          </div>
-          <div>
-            <input
-              type="number"
-              v-model="wantedPrice"
-              placeholder="원하는 매매 가격을 적어주세요!"
-            />
-          </div>
-        </div>
+          </button>
+        </form>
       </div>
-      <div id="blocks">
-        <zip-block-write-item
-          v-for="index in blockItemsLength"
-          :key="index"
-          :index="index"
-        ></zip-block-write-item>
+      <div class="map_section">
+        <div :id="'map' + index" class="maps"></div>
+        <div :id="'list' + index" class="lists"></div>
       </div>
-      <div class="section" id="makeBtn">
-        <button id="makeSection" @click.prevent="clickMakeBtn">
-          <font-awesome-icon icon="fa-solid fa-circle-plus" />
-        </button>
+      <div v-show="isType">
+        {{ this.introduceValue }}
       </div>
+    </div>
+    <div>
+      <input
+        type="text"
+        v-model="content"
+        placeholder="간단하게 소개해주세요!"
+      />
     </div>
   </div>
 </template>
 
 <script>
-import { getHouseDetailInfo } from "@/api/map";
-import ZipBlockWriteItem from "@/components/zip/items/ZipBlockWriteItem";
 export default {
-  name: "ZipWrite",
+  name: "ZipBlockWriteItem",
   data() {
     return {
       searchValue: "", // 검색
@@ -78,20 +61,30 @@ export default {
       ps: null, // 장소 검색
       geocoder: null,
       searchPlaceholder: "주거 시설을 검색해주세요.",
-      isResident: false,
+      isType: false,
       dong: "",
       regCode: "",
       residentResults: [],
       introduceValue: "",
       curIntroduceMarker: null,
-      blockItemsLength: 1,
+      types: [
+        { key: "SC4", value: "학교" },
+        { key: "SW8", value: "지하철역" },
+        { key: "CT1", value: "문화시설" },
+        { key: "FD6", value: "음식점" },
+        { key: "CE7", value: "카페" },
+        { key: "HP8", value: "병원" },
+      ],
+      selectedType: "SC4",
+      placeName: "",
+      content: "",
     };
+  },
+  props: {
+    index: Number,
   },
   mounted() {
     this.initMap();
-  },
-  components: {
-    ZipBlockWriteItem,
   },
   methods: {
     initMap() {
@@ -106,7 +99,8 @@ export default {
       }
     },
     makeMap() {
-      const mapContainer = document.querySelector("#map");
+      const mapContainer = document.querySelector(`#map${this.index}`);
+      console.log("item", mapContainer);
       const mapOption = {
         center: new kakao.maps.LatLng(this.current.lat, this.current.lng),
         level: 4,
@@ -132,17 +126,26 @@ export default {
         // 검색된 장소 위치를 기준으로 지도 범위를 재설정하기위해
         // LatLngBounds 객체에 좌표를 추가합니다
         console.log("s", data);
-        this.isResident = false;
+        this.isType = false;
         let place = null;
         this.residentResults = [];
         const listDiv = data.reduce(
           (
             cur,
-            { place_url, place_name, category_name, y, x, address_name }
+            {
+              place_url,
+              place_name,
+              category_name,
+              y,
+              x,
+              address_name,
+              category_group_code,
+            }
           ) => {
-            console.log(category_name);
-            if (category_name.includes("주거시설")) {
-              console.log("주거시설~");
+            //place_url, place_name, category_name, y, x, address_name,category_group_code
+            //   console.log(data);
+            if (category_group_code === this.selectedType) {
+              console.log(place_name, address_name);
               this.residentResults.push({
                 place_url,
                 place_name,
@@ -151,23 +154,23 @@ export default {
                 x,
                 address_name,
               });
-              this.isResident = true;
+              this.isType = true;
 
               // this.dong = currentAddress.split(" ")[2];
               // this.regCode = result[i].code;
               return (
                 cur +
                 `
-              <div class="resident_items" data-x=${x} data-y=${y} data-aptName=${place_name}>${address_name} ${place_name}</div>
-            `
+            <div class="resident_items" data-x=${x} data-y=${y} data-placeName=${place_name}>${address_name} ${place_name}</div>
+          `
               );
             }
             return cur;
           },
           ""
         );
-        if (this.isResident) {
-          const list = document.querySelector("#list");
+        if (this.isType) {
+          const list = document.querySelector(`#list${this.index}`);
           list.innerHTML = listDiv;
           console.log(list.childNodes);
           list.childNodes.forEach((child) => {
@@ -178,7 +181,7 @@ export default {
               );
               const x = child.attributes["data-x"].value;
               const y = child.attributes["data-y"].value;
-              this.introduceValue = child.attributes["data-aptName"].value;
+              this.introduceValue = child.attributes["data-placeName"].value;
 
               var bounds = new kakao.maps.LatLngBounds();
               bounds.extend(new kakao.maps.LatLng(y, x));
@@ -225,7 +228,6 @@ export default {
           }
         }
         console.log("sc", this.regCode);
-        this.getRecentPrice();
       } else {
         this.currentAddress = "실패";
       }
@@ -238,128 +240,8 @@ export default {
         position: new kakao.maps.LatLng(place.y, place.x),
       });
     },
-    async getRecentPrice() {
-      console.log("getRecentPrice", this.regCode, this.introduceValue);
-      await getHouseDetailInfo(this.regCode, this.introduceValue).then(
-        (data) => {
-          console.log("price", data);
-        }
-      );
-    },
-    clickMakeBtn() {
-      this.blockItemsLength += 1;
-    },
   },
 };
 </script>
 
-<style lang="scss">
-#main {
-  width: 100%;
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  align-items: center;
-}
-#write_container {
-  width: 50%;
-}
-#write_section {
-  margin-top: 50px;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #f8f8f8;
-  box-shadow: 0px 0px 250px 14px rgba(0, 0, 0, 0.25);
-  border-radius: 50px;
-}
-.section {
-  width: 100%;
-  padding: 50px 0;
-  margin-top: 50px;
-  border-radius: 10px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  background: #f8f8f8;
-  box-shadow: 0px 0px 250px 14px rgba(0, 0, 0, 0.25);
-  border-radius: 50px;
-}
-.section > * {
-  width: 70%;
-}
-.form {
-  display: flex;
-  flex-direction: column;
-  justify-content: center;
-  gap: 30px;
-}
-#search_bar {
-  height: 5vh;
-}
-#search_bar form {
-  display: flex;
-  justify-content: space-between;
-}
-#search_bar form #search {
-  height: 5vh;
-  width: 80%;
-  border-radius: 10px 0 0 10px;
-}
-#search_bar form #search:focus {
-  border: 0;
-}
-#search_bar form #submit_btn {
-  width: 20%;
-  border-style: none;
-  background: black;
-  border-radius: 0 10px 10px 0;
-}
-#search_bar form #submit_btn #submit_btn_icon {
-  color: $main;
-}
-.map_section {
-  height: 200px;
-  display: flex;
-}
-.map_section .maps {
-  width: 100%;
-  height: 100%;
-}
-.map_section .list {
-  overflow: scroll;
-}
-.map_section .resident_items {
-  font-size: 10px;
-  border-bottom: 1px solid #000;
-  padding: 2px;
-}
-.map_section .resident_items:hover {
-  background: $main;
-}
-input,
-#focus {
-  border: none;
-  border-right: 0px;
-  border-top: 0px;
-  border-left: 0px;
-  border-bottom: 1px solid rgba(0, 0, 0, 0.19);
-  background: #f8f8f8;
-  width: 100%;
-  display: block;
-}
-input:focus,
-#search:focus {
-  border: none;
-  outline: none;
-  border-bottom: 1px solid $main;
-  transition: border-bottom 1s;
-}
-#makeBtn:hover {
-  border: 2px solid $main;
-  transition: border 0.3s;
-}
-</style>
+<style scoped lang="scss"></style>

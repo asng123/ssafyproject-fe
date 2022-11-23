@@ -7,7 +7,7 @@ async function getMapInfo(regcode, success, fail) {
   return await map.get(`/?regcode_pattern=${regcode}&is_ignore_zero=true`);
 }
 
-async function getHouseInfo(regCode, success, fail) {
+async function getHouseInfos(regCode, success, fail) {
   const params = {
     dong: regCode,
   };
@@ -16,7 +16,16 @@ async function getHouseInfo(regCode, success, fail) {
     .then(success)
     .catch(fail);
 }
-
+async function getHouseDetailInfos(regCode, aptName, success, fail) {
+  const params = {
+    dong: regCode,
+    aptname: aptName,
+  };
+  return await api
+    .get(`/map/aptinfos`, { params: params })
+    .then(success)
+    .catch(fail);
+}
 async function getHouseDetailInfo(regCode, aptName, success, fail) {
   const params = {
     dong: regCode,
@@ -27,4 +36,4 @@ async function getHouseDetailInfo(regCode, aptName, success, fail) {
     .then(success)
     .catch(fail);
 }
-export { getMapInfo, getHouseInfo, getHouseDetailInfo };
+export { getMapInfo, getHouseInfos, getHouseDetailInfos, getHouseDetailInfo };

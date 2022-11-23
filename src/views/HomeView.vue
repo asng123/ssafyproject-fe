@@ -90,7 +90,7 @@
 
 <script>
 import axios from "axios";
-import { getMapInfo, getHouseInfo, getHouseDetailInfo } from "@/api/map";
+import { getMapInfo, getHouseInfos, getHouseDetailInfos } from "@/api/map";
 import Side from "@/components/map/side.vue";
 import TradeChart from "@/components/chart/TradeChart.vue";
 
@@ -255,7 +255,7 @@ export default {
       console.log("find house deal info", this.regCode);
       console.log("prevAddress", this.currentPrevAddress);
       // this.convertToLatLng("서울특별시 중구 태평로1가 146-1 삼풍");
-      await getHouseInfo(this.regCode).then(({ data }) => {
+      await getHouseInfos(this.regCode).then(({ data }) => {
         // console.log(data.response.body.items.item);
         // data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
         //   console.log(지번, 법정동, 아파트);
