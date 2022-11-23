@@ -55,13 +55,13 @@
               ></b-form-input>
             </b-form-group>
             <b-form-input
-                type="text"
-                id="userPhoneNumber"
-                v-model="user.phonenumber"
-                required
-                placeholder="전화번호...."
-                @keyup.enter="confirm"
-              ></b-form-input>
+              type="text"
+              id="userPhoneNumber"
+              v-model="user.phonenumber"
+              required
+              placeholder="전화번호...."
+              @keyup.enter="confirm"
+            ></b-form-input>
             <b-form-group label="비밀번호:" label-for="userpwd">
               <b-form-input
                 type="password"
@@ -170,7 +170,7 @@ export default {
       };
       await join(user, ({ data }) => {
         if (data.message === "success") {
-          this.$router.push({ name: "Join" });
+          this.$router.push({ name: "home" });
         } else {
           this.finalMessage = "회원가입에 실패했습니다. 문의해주세요.";
         }

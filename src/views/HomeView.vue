@@ -1,6 +1,9 @@
 <template>
   <div id="main" :class="{ usual: isFocus, intro: !isFocus }">
-    <div id="search_bar" :class="{ focus: isFocus === true }">
+    <div
+      id="search_bar"
+      :class="{ focus: isFocus === true, go_right: isSideOpen }"
+    >
       <form action="">
         <b-form-input
           id="search"
@@ -18,68 +21,37 @@
     </div>
     <div id="map_div" v-show="isFocus">
       <div class="side_container" v-show="isSideOpen">
-        <div id="side">
-          <div id="apartment_name">한강메트로자이 2단지</div>
-          <button @click.prevent="clickSide">
-            <font-awesome-icon icon="fa-solid fa-xmark" />
-          </button>
-          <b-carousel
-            id="carousel-1"
-            v-model="slide"
-            :interval="4000"
-            controls
-            indicators
-            background="#ababab"
-            img-width="1024"
-            img-height="480"
-            style="text-shadow: 1px 1px 2px #333"
-            @sliding-start="onSlideStart"
-            @sliding-end="onSlideEnd"
-          >
-            <!-- Text slides with image -->
-            <b-carousel-slide
-              caption="First slide"
-              text="Nulla vitae elit libero, a pharetra augue mollis interdum."
-              img-src="https://picsum.photos/1024/480/?image=52"
-            ></b-carousel-slide>
-
-            <!-- Slides with custom text -->
-            <b-carousel-slide
-              img-src="https://picsum.photos/1024/480/?image=54"
-            >
-              <h1>Hello world!</h1>
-            </b-carousel-slide>
-
-            <!-- Slides with image only -->
-            <b-carousel-slide
-              img-src="https://picsum.photos/1024/480/?image=58"
-            ></b-carousel-slide>
-
-            <!-- Slides with img slot -->
-            <!-- Note the classes .d-block and .img-fluid to prevent browser default image alignment -->
-
-            <!-- Slide with blank fluid image to maintain slide aspect ratio -->
-          </b-carousel>
-        </div>
-        <div>
-          <b-table
-            stacked
-            :items="houseDetailInfos"
-            hover
-            :per-page="perPage"
-            :current-page="currentPage"
-          ></b-table>
-          <b-pagination
-            v-model="currentPage"
-            align="center"
-            pills
-            :total-rows="rows"
-            :per-page="perPage"
-            size="sm"
-          ></b-pagination>
-        </div>
-        <div style="padding: 10px" v-if="isHouseDetailRendered">
-          <trade-chart :houseDetailInfos="houseDetailInfos"></trade-chart>
+        <div class="side">
+          <div id="side_header">
+            <div id="info">
+              <div id="address">하하하하</div>
+              <div id="apartment_name">한강메트로자이 2단지</div>
+            </div>
+            <button id="cancle_btn" @click.prevent="clickSide">
+              <font-awesome-icon icon="fa-solid fa-xmark" />
+            </button>
+          </div>
+          <div id="roadview"></div>
+          <div id="chart" v-if="isHouseDetailRendered">
+            <trade-chart :houseDetailInfos="houseDetailInfos"></trade-chart>
+          </div>
+          <div>
+            <b-table
+              stacked
+              :items="houseDetailInfos"
+              hover
+              :per-page="perPage"
+              :current-page="currentPage"
+            ></b-table>
+            <b-pagination
+              v-model="currentPage"
+              align="center"
+              pills
+              :total-rows="rows"
+              :per-page="perPage"
+              size="sm"
+            ></b-pagination>
+          </div>
         </div>
       </div>
       <!-- <div id="current">{{ currentAddress }}</div> -->
@@ -90,9 +62,10 @@
 
 <script>
 import axios from "axios";
-import { getMapInfo, getHouseInfo, getHouseDetailInfo } from "@/api/map";
+import { getMapInfo, getHouseInfos, getHouseDetailInfos } from "@/api/map";
 import Side from "@/components/map/side.vue";
 import TradeChart from "@/components/chart/TradeChart.vue";
+import { set } from "vue";
 
 export default {
   name: "HomeView",
@@ -117,6 +90,7 @@ export default {
       isSideOpen: false,
       houseDetailInfos: [],
       isHouseDetailRendered: false,
+      loadedRegion: new Set(),
     };
   },
   computed: {
@@ -214,7 +188,13 @@ export default {
           }
         }
         console.log("sc", this.regCode);
-        this.findHouseDealInfo();
+        if (!this.loadedRegion.has(this.regCode)) {
+          console.log("doesnt has ", this.regCode);
+          this.loadedRegion.add(this.regCode);
+          this.findHouseDealInfo();
+        } else {
+          console.log("already has ", this.regCode);
+        }
       } else {
         this.currentAddress = "실패";
       }
@@ -255,7 +235,7 @@ export default {
       console.log("find house deal info", this.regCode);
       console.log("prevAddress", this.currentPrevAddress);
       // this.convertToLatLng("서울특별시 중구 태평로1가 146-1 삼풍");
-      await getHouseInfo(this.regCode).then(({ data }) => {
+      await getHouseInfos(this.regCode).then(({ data }) => {
         // console.log(data.response.body.items.item);
         // data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
         //   console.log(지번, 법정동, 아파트);
@@ -268,8 +248,9 @@ export default {
         //     );
         //   }
         // });
-        // console.log("res", data);
+        console.log("res", data);
         data.forEach(({ aptName, jibun, lat, lng }) => {
+          aptName = aptName.trim();
           this.houseInfoMarker(aptName, jibun, lat, lng);
         });
       });
@@ -280,7 +261,7 @@ export default {
       let coords = new kakao.maps.LatLng(lat, lng);
       var imageSrc =
           "https://cdn.icon-icons.com/icons2/1859/PNG/512/apartment_117972.png", // 마커이미지의 주소입니다
-        imageSize = new kakao.maps.Size(23, 25), // 마커이미지의 크기입니다
+        imageSize = new kakao.maps.Size(35, 35), // 마커이미지의 크기입니다
         imageOption = { offset: new kakao.maps.Point(10, 30) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
       // 마커의 이미지정보를 가지고 있는 마커이미지를 생성합니다
@@ -299,7 +280,7 @@ export default {
       marker.setMap(this.map);
       // 마커에 표시할 인포윈도우를 생성합니다
       var infowindow = new kakao.maps.InfoWindow({
-        content: `<div>${aptName}</div>`, // 인포윈도우에 표시할 내용
+        content: `<div class="infowindow">${aptName}</div>`, // 인포윈도우에 표시할 내용
       });
       let $this = this;
       // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
@@ -320,8 +301,9 @@ export default {
       let regCode = this.regCode;
       kakao.maps.event.addListener(marker, "click", async (e) => {
         this.isSideOpen = true;
+        document.querySelector("#address").innerHTML = this.currentAddress;
         document.querySelector("#apartment_name").innerHTML = aptName;
-        await getHouseDetailInfo(regCode, aptName).then(({ data }) => {
+        await getHouseDetailInfos(regCode, aptName).then(({ data }) => {
           this.houseDetailInfos = data.reduce(
             (
               cur,
@@ -341,8 +323,6 @@ export default {
               return [
                 ...cur,
                 {
-                  아파트: apartmentName,
-                  주소: `${roadName} ${jibun}`,
                   층: floor,
                   면적: area,
                   가격: `${dealAmount}원`,
@@ -382,7 +362,7 @@ export default {
 <style lang="scss" scoped>
 #main {
   width: 100%;
-  height: 100vh;
+  height: 92vh;
   overflow: hidden;
   background-size: cover;
   background-repeat: no-repeat;
@@ -412,6 +392,10 @@ export default {
 .focus {
   top: 12vh;
   animation: searchUp 2s;
+}
+.go_right {
+  right: 10vw;
+  transition: right 1s;
 }
 #search_bar {
   width: 40%;
@@ -467,13 +451,44 @@ export default {
   position: absolute;
   width: 30%;
   min-width: 300px;
-  height: 100vh;
+  height: 92vh;
   z-index: 50;
   background: white;
   box-shadow: 3px 3px 3px #00000050;
   border-radius: 10px;
   overflow: scroll;
   scrollbar-width: none; /* Firefox */
+}
+.side_container::-webkit-scrollbar {
+  display: none;
+}
+.side {
+  display: flex;
+  flex-direction: column;
+  padding: 20px;
+}
+.side #side_header {
+  display: flex;
+  width: 100%;
+  justify-content: space-between;
+  padding: 10px;
+}
+.side #side_header #info {
+}
+.side #side_header #info #address {
+  font-size: 15px;
+}
+.side #side_header #info #apartment_name {
+  font-size: 20px;
+}
+.side #side_header #cancle_btn {
+  width: 30px;
+  height: 30px;
+  background: 0;
+  border: 0;
+}
+#chart {
+  padding: 20px;
 }
 </style>
 
@@ -523,5 +538,8 @@ export default {
   width: 22px;
   height: 12px;
   background: url("https://t1.daumcdn.net/localimg/localimages/07/mapapidoc/vertex_white.png");
+}
+.infowindow {
+  padding: 10px 30px;
 }
 </style>
