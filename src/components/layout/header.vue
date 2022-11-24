@@ -1,6 +1,8 @@
 <template>
   <div id="header" :class="{ home_header: isHome }">
-    <div id="logo"><a href="/">내집</a></div>
+    <div id="logo">
+      <a href="/"> <img src="../../assets/logo.png" /></a>
+    </div>
     <div id="nav">
       <div id="left">
         <ul>
@@ -106,7 +108,7 @@ export default {
 #header {
   width: 100%;
   height: 8vh;
-  padding: 0 2vh;
+  padding: 0 3vh;
   transition: background-color 0.5s;
 
   display: grid;
@@ -129,20 +131,48 @@ export default {
   transition: background-color 0.5s;
   background: black;
 }
+#left,
+#right {
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 
+  text-align: end;
+}
+ul {
+  margin-bottom: 0;
+}
 #nav {
   width: 100%;
+  height: 100%;
   display: flex;
   justify-content: space-between;
+  align-items: center;
 }
 li {
   list-style: none;
+}
+#logo {
+  width: 100%;
+  height: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+}
+#logo img {
+  width: 20px;
+  height: 20px;
+  object-fit: cover;
 }
 #profile {
   float: left;
   position: relative;
   z-index: 1;
   cursor: pointer;
+  display: flex;
+  justify-content: center;
+  align-items: center;
 }
 #profile-content {
   padding: 0;

@@ -1,7 +1,7 @@
 <template>
   <div id="main">
     <div id="submit_btn_container">
-      <button class="btn" id="submit_btn" @click="submitBtnHandler">
+      <button class="button" id="submit_btn" @click="submitBtnHandler">
         <font-awesome-icon icon="fa-solid fa-circle-check" size="3x" />
       </button>
     </div>
@@ -70,7 +70,7 @@
         ></zip-block-write-item>
       </div>
       <div class="section" id="makeBtn">
-        <button class="btn" id="makeSection" @click.prevent="clickMakeBtn">
+        <button class="button" id="makeSection" @click.prevent="clickMakeBtn">
           <font-awesome-icon icon="fa-solid fa-circle-plus" />
         </button>
       </div>
@@ -357,6 +357,7 @@ export default {
 <style lang="scss">
 #main {
   width: 100%;
+  min-height: 100vh;
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -477,7 +478,7 @@ textarea:focus,
   border: 2px solid $main;
   transition: border 0.3s;
 }
-button.btn {
+.button {
   width: 100%;
   height: 100%;
   border: 0;
