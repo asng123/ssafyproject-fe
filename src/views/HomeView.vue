@@ -23,7 +23,7 @@
       </form>
     </div>
     <div id="map_div" v-show="isFocus">
-      <div class="side_container" v-show="isSideOpen">
+      <div class="side_container" v-if="isSideOpen">
         <div class="side">
           <div id="side_header">
             <div id="info">
@@ -36,7 +36,11 @@
             </button>
           </div>
           <div id="roadview">
-            <road-view :houseDetailInfos="houseDetailInfos"></road-view>
+            <road-view
+              :lat="roadview_lat"
+              :lng="roadview_lng"
+              :index="1"
+            ></road-view>
           </div>
           <div id="chart" v-if="isHouseDetailRendered">
             <trade-chart :houseDetailInfos="houseDetailInfos"></trade-chart>
@@ -110,6 +114,8 @@ export default {
         aptName: "",
         zips: [],
       },
+      roadview_lat: 0,
+      roadview_lng: 0,
     };
   },
   computed: {
@@ -334,8 +340,8 @@ export default {
           aptname: aptname,
           zips: [],
         };
-        document.querySelector("#address").innerHTML = this.currentAddress;
-        document.querySelector("#apartment_name").innerHTML = aptname;
+        document.querySelector(".zip_address").innerHTML = this.currentAddress;
+        document.querySelector(".zip_apartment_name").innerHTML = aptname;
         await getAptZipList(regcode, aptname).then(({ data }) => {
           console.log("side", data.zips);
           this.sideData.zips = data.zips;
@@ -389,6 +395,8 @@ export default {
         this.isHomeSideOpen = false;
         this.isSideOpen = true;
         let by = "2020";
+        this.roadview_lat = lat;
+        this.roadview_lng = lng;
         await getHouseDetailInfos(regcode, aptName).then(({ data }) => {
           this.houseDetailInfos = data.reduce(
             (
@@ -486,7 +494,7 @@ export default {
   animation: searchUp 2s;
 }
 .go_right {
-  right: 10vw;
+  right: 15vw;
   transition: right 1s;
 }
 #search_bar {
@@ -641,5 +649,9 @@ export default {
 }
 .infowindow {
   padding: 10px 30px;
+}
+#roadview {
+  width: 100%;
+  height: 300px;
 }
 </style>
