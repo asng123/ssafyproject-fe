@@ -20,7 +20,7 @@
             <font-awesome-icon icon="fa-solid fa-user" />
           </li>
           <li v-else><a href="/user/login">로그인</a></li>
-          <ul id="profile-content" v-show="isDropOpen">
+          <ul id="profile-content" v-show="isDropOpen" style="z-index: 100">
             <li @click.prevent="onClickLogout">로그아웃</li>
             <li @click.prevent="onClickAdminpage" v-if="isAdmin">회원관리</li>
             <li @click.prevent="onClickUserInfo" v-else>내 정보</li>
@@ -48,9 +48,15 @@ export default {
   created() {
     console.log(this.userInfo);
     this.isAdmin = this.userInfo ? this.userInfo.uid === "admin" : false;
+    // this.isAdmin = this.userInfo.uid === "admin" ? true : false;
     window.addEventListener("scroll", this.updateScroll);
     this.isHome = window.location.pathname === "/";
     console.log("w", window.location.pathname);
+  },
+  watch: {
+    userInfo() {
+      this.isAdmin = this.userInfo ? this.userInfo.uid === "admin" : false;
+    },
   },
   methods: {
     updateScroll() {
@@ -62,20 +68,14 @@ export default {
     },
     ...mapActions(memberStore, ["userLogout"]),
     onClickLogout() {
-      // this.SET_IS_LOGIN(false);
-      // this.SET_USER_INFO(null);
-      // sessionStorage.removeItem("access-token");
-      // if (this.$route.path != "/") this.$router.push({ name: "main" });
-      console.log(this.userInfo);
-      //vuex actions에서 userLogout 실행(Backend에 저장 된 리프레시 토큰 없애기
-      //+ satate에 isLogin, userInfo 정보 변경)
-      // this.$store.dispatch("userLogout", this.userInfo.userid);
-      this.userLogout(this.userInfo.uid);
-      sessionStorage.removeItem("access-token"); //저장된 토큰 없애기
-      sessionStorage.removeItem("refresh-token"); //저장된 토큰 없애기
-      if (this.$route.path != "/") this.$router.push({ name: "main" });
-      this.dropdown();
-      this.$router.push({ name: "home" });
+      if (confirm("정말 로그아웃 하시겠습니까?")) {
+        this.userLogout(this.userInfo.uid);
+        sessionStorage.removeItem("access-token"); //저장된 토큰 없애기
+        sessionStorage.removeItem("refresh-token"); //저장된 토큰 없애기
+        if (this.$route.path != "/") this.$router.push({ name: "main" });
+        this.dropdown();
+        this.$router.push({ name: "home" });
+      }
     },
     onClickUserInfo() {
       this.dropdown();
@@ -151,5 +151,12 @@ li {
   width: 150px;
   position: absolute;
   border: 0.5px solid #00000050;
+
+  transition: background-color 0.5s;
+  background: #000000d4;
+}
+#profile-content:hover {
+  transition: background-color 0.5s;
+  background: black;
 }
 </style>

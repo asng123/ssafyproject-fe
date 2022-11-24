@@ -2,24 +2,25 @@
   <b-container class="bv-example-row mt-3">
     <b-row>
       <b-col>
-        <b-alert show><h3>회원 목록</h3></b-alert>
+        <b-alert show id="top"><h3>회원 목록</h3></b-alert>
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <b-table id="tbuser" 
-        striped 
-        hover 
-        :items="users" 
-        :per-page="perPage"
-        :current-page="currentPage"
-        :fields="fields" 
+        <b-table
+          id="tbuser"
+          hover
+          :items="users"
+          :per-page="perPage"
+          :current-page="currentPage"
+          :fields="fields"
+          align="center"
         >
-        <template #cell(actions)="data">
-          <b-button size="sm" @click="DelMember(data.item.uid)" class="mr-1">
-            delete
-          </b-button>
-        </template>
+          <template #cell(actions)="data">
+            <b-button size="sm" @click="DelMember(data.item.uid)">
+              delete
+            </b-button>
+          </template>
         </b-table>
         <b-pagination
           v-model="currentPage"
@@ -50,9 +51,9 @@ export default {
         { key: "email", label: "이메일", tdClass: "tdClass" },
         { key: "password", label: "비밀번호", tdClass: "tdClass" },
         { key: "nickname", label: "닉네임", tdClass: "tdClass" },
-        { key: "joindate", label: "가입일", tdClass: "tdClass" },
-        { key: "phonenumber", label: "전화번호", tdClass: "tdClass" },
-        { key: 'actions', label: 'Delete' },
+        { key: "joindate", label: "가입일", tdSubject: "tdSubject" },
+        { key: "phonenumber", label: "전화번호", tdSubject: "tdSubject" },
+        { key: "actions", label: "Delete" },
       ],
     };
   },
@@ -73,21 +74,22 @@ export default {
   },
   methods: {
     async DelMember(userid) {
-      console.log(userid);
-      await del(userid,({data})=>{
-        if(data.message=="success"){
-          userlist(
-            ({ data }) => {
-              this.users = data.users;
-            },
-          (error) => {
-            console.log(error);
+      if (confirm("정말 추방시키겠습니까?")) {
+        await del(userid, ({ data }) => {
+          if (data.message == "success") {
+            userlist(
+              ({ data }) => {
+                this.users = data.users;
+              },
+              (error) => {
+                console.log(error);
+              }
+            );
+          } else {
+            this.message = "회원 탈퇴에 실패했습니다. 다시 시도해주세요.";
           }
-    );
-        }else{
-          this.message ="회원 탈퇴에 실패했습니다. 다시 시도해주세요.";
-        }
-      })
+        });
+      }
     },
   },
 };
@@ -95,11 +97,13 @@ export default {
 
 <style scope>
 .tdClass {
-  width: 50px;
-  text-align: center;
+  width: 10%;
 }
 .tdSubject {
-  width: 300px;
+  width: 20%;
   text-align: left;
+}
+#top {
+  background: white;
 }
 </style>

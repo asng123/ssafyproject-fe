@@ -7,23 +7,28 @@
     </b-row>
     <b-row class="mb-1">
       <b-col class="text-right" v-if="userInfo.uid === `admin`">
-        <b-button variant="outline-primary" @click="moveWrite()">글쓰기</b-button>
+        <b-button variant="outline-primary" @click="moveWrite()"
+          >글쓰기</b-button
+        >
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <b-table id="tbarticle" 
-        striped 
-        hover 
-        :items="articles" 
-        :per-page="perPage"
-        :current-page="currentPage"
-        :fields="fields" 
-        align="center"
-        @row-clicked="viewArticle"
+        <b-table
+          id="tbarticle"
+          striped
+          hover
+          :items="articles"
+          :per-page="perPage"
+          :current-page="currentPage"
+          :fields="fields"
+          align="center"
+          @row-clicked="viewArticle"
         >
           <template #cell(subject)="data">
-            <router-link :to="{ name: 'boardview', params: { bid: data.item.bid } }">
+            <router-link
+              :to="{ name: 'boardview', params: { bid: data.item.bid } }"
+            >
               {{ data.item.subject }}
             </router-link>
           </template>
