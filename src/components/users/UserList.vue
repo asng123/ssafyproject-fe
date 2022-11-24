@@ -106,4 +106,6 @@ export default {
 #top {
   background: white;
 }
+#tbuser {
+}
 </style>
