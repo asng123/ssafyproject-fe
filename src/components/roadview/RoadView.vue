@@ -8,7 +8,7 @@ export default {
   props: {
     lat: String,
     lng: String,
-    index: Number,
+    index: String,
   },
   data() {
     return {

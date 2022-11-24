@@ -39,7 +39,7 @@
             <road-view
               :lat="roadview_lat"
               :lng="roadview_lng"
-              :index="1"
+              index="sidebar"
             ></road-view>
           </div>
           <div id="chart" v-if="isHouseDetailRendered">

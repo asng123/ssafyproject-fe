@@ -15,6 +15,10 @@
             :content="zip.content"
             :price="zip.price"
             :regcode="zip.regcode"
+            :lat="zip.lat"
+            :lng="zip.lng"
+            :index="zip.zid"
+            :idx="zip.pidx"
           >
           </zip-thumbnail>
         </div>
@@ -47,6 +51,7 @@ export default {
       await getAllList()
         .then(({ data }) => {
           if (data.message == "success") {
+            console.log(data.zips);
             this.hottestZipsList = data.zips;
             console.log(this.hottestZipsList);
           } else {

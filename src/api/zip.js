@@ -36,4 +36,20 @@ async function getAptZipList(dong, aptname, success, fail) {
     .then(success)
     .catch(fail);
 }
-export { addZip, addZipBlock, getAllList, getDetailZip, getAptZipList };
+
+async function getImageUrl(idx, success, fail) {
+  console.log("get getImageUrl ", idx);
+  const params = { idx };
+  return await api
+    .get("/zip/imageurl", { params: params })
+    .then(success)
+    .catch(fail);
+}
+export {
+  addZip,
+  addZipBlock,
+  getAllList,
+  getDetailZip,
+  getAptZipList,
+  getImageUrl,
+};
