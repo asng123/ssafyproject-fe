@@ -103,7 +103,7 @@ export default {
 
       ret.datasets[0] = {
         label: "매매가격",
-        backgroundColor: "#f87979",
+        backgroundColor: "#4db5ff",
         data: aptinfo,
       };
 
