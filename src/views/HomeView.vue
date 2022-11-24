@@ -56,6 +56,11 @@
           </div>
         </div>
       </div>
+      <zip-side
+        v-show="isHomeSideOpen"
+        :sideData="sideData"
+        @clickSide="clickSide"
+      ></zip-side>
       <!-- <div id="current">{{ currentAddress }}</div> -->
       <div id="map"></div>
     </div>
@@ -65,8 +70,9 @@
 <script>
 import axios from "axios";
 import { getMapInfo, getHouseInfos, getHouseDetailInfos } from "@/api/map";
-import { getAllList } from "@/api/zip";
+import { getAllList, getAptZipList } from "@/api/zip";
 import Side from "@/components/map/side.vue";
+import ZipSide from "@/components/map/zipSide";
 import TradeChart from "@/components/chart/TradeChart.vue";
 import RoadView from "@/components/roadview/RoadView.vue";
 import { set } from "vue";
@@ -95,6 +101,12 @@ export default {
       houseDetailInfos: [],
       isHouseDetailRendered: false,
       loadedRegion: new Set(),
+      isHomeSideOpen: false,
+      sideData: {
+        address: "",
+        aptName: "",
+        zips: [],
+      },
     };
   },
   computed: {
@@ -106,6 +118,7 @@ export default {
   components: {
     TradeChart,
     RoadView,
+    ZipSide,
   },
   methods: {
     focused() {
@@ -254,9 +267,9 @@ export default {
         //   }
         // });
         console.log("res", data);
-        data.forEach(({ aptName, jibun, lat, lng }) => {
+        data.forEach(({ aptName, jibun, lat, lng, dongCode }) => {
           aptName = aptName.trim();
-          this.houseInfoMarker(aptName, jibun, lat, lng);
+          this.houseInfoMarker(aptName, jibun, lat, lng, dongCode);
         });
       });
       console.log("findHouseDealInfo finish");
@@ -267,8 +280,8 @@ export default {
       await getAllList()
         .then(({ data }) => {
           console.log("naezip res", data);
-          data.zips.forEach(({ aptname, lat, lng }) => {
-            this.naezipInfoMarker(aptname, lat, lng);
+          data.zips.forEach(({ aptname, lat, lng, regcode }) => {
+            this.naezipInfoMarker(aptname, lat, lng, regcode);
           });
         })
         .catch((e) => {
@@ -280,8 +293,8 @@ export default {
 
       console.log("findnaezipInfo finish");
     },
-    naezipInfoMarker(aptname, lat, lng) {
-      console.log("naezip", aptname, lat, lng);
+    naezipInfoMarker(aptname, lat, lng, regcode) {
+      console.log("naezip", aptname, lat, lng, regcode);
       let coords = new kakao.maps.LatLng(lat, lng);
       var imageSrc = "https://cdn-icons-png.flaticon.com/512/5385/5385604.png", // 마커이미지의 주소입니다
         imageSize = new kakao.maps.Size(35, 35), // 마커이미지의 크기입니다
@@ -320,47 +333,26 @@ export default {
         });
       })(marker, infowindow);
 
-      // 마커에 클릭이벤트를 등록합니다
-      // let regCode = this.regCode;
-      // kakao.maps.event.addListener(marker, "click", async (e) => {
-      //   this.isSideOpen = true;
-      //   document.querySelector("#address").innerHTML = this.currentAddress;
-      //   document.querySelector("#apartment_name").innerHTML = aptName;
-      //   await getHouseDetailInfos(regCode, aptName).then(({ data }) => {
-      //     this.houseDetailInfos = data.reduce(
-      //       (
-      //         cur,
-      //         {
-      //           apartmentName,
-      //           area,
-      //           buildYear,
-      //           dealAmount,
-      //           dealDay,
-      //           dealMonth,
-      //           dealYear,
-      //           floor,
-      //           jibun,
-      //           roadName,
-      //         }
-      //       ) => {
-      //         return [
-      //           ...cur,
-      //           {
-      //             층: floor,
-      //             면적: area,
-      //             가격: `${dealAmount}원`,
-      //             "준공 년도": `${buildYear}년`,
-      //             거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
-      //           },
-      //         ];
-      //       },
-      //       []
-      //     );
-      //     this.isHouseDetailRendered = true;
-      //   });
-      // });
+      //마커에 클릭이벤트를 등록합니다
+      kakao.maps.event.addListener(marker, "click", async (e) => {
+        this.isSideOpen = false;
+        this.isHomeSideOpen = true;
+        console.log("open");
+        this.sideData = {
+          address: this.currentAddress,
+          aptname: aptname,
+          zips: [],
+        };
+        document.querySelector("#address").innerHTML = this.currentAddress;
+        document.querySelector("#apartment_name").innerHTML = aptname;
+        await getAptZipList(regcode, aptname).then(({ data }) => {
+          console.log("side", data.zips);
+          this.sideData.zips = data.zips;
+          console.log(this.sideData.zips);
+        });
+      });
     },
-    houseInfoMarker(aptName, jibun, lat, lng) {
+    houseInfoMarker(aptName, jibun, lat, lng, regcode) {
       console.log("ctl", aptName, jibun, lat, lng);
       let coords = new kakao.maps.LatLng(lat, lng);
       var imageSrc = "https://cdn-icons-png.flaticon.com/512/2213/2213900.png", // 마커이미지의 주소입니다
@@ -401,12 +393,13 @@ export default {
       })(marker, infowindow);
 
       // 마커에 클릭이벤트를 등록합니다
-      let regCode = this.regCode;
+      // let regCode = this.regCode;
       kakao.maps.event.addListener(marker, "click", async (e) => {
+        this.isHomeSideOpen = false;
         this.isSideOpen = true;
         document.querySelector("#address").innerHTML = this.currentAddress;
         document.querySelector("#apartment_name").innerHTML = aptName;
-        await getHouseDetailInfos(regCode, aptName).then(({ data }) => {
+        await getHouseDetailInfos(regcode, aptName).then(({ data }) => {
           this.houseDetailInfos = data.reduce(
             (
               cur,
@@ -445,7 +438,8 @@ export default {
       });
     },
     clickSide() {
-      this.isSideOpen = !this.isSideOpen;
+      this.isSideOpen = false;
+      this.isHomeSideOpen = false;
     },
     async findRegCode() {
       const temp = this.currentAddress.split(" ");
