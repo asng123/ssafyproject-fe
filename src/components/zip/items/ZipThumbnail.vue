@@ -34,7 +34,7 @@ export default {
   created() {},
   methods: {
     handleThumbnail() {
-      this.$router.push(`view/${this.zid}`);
+      this.$router.push({ name: "zipdetailview", params: { zid: this.zid } });
     },
   },
 };

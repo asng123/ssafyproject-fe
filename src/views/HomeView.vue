@@ -338,11 +338,12 @@ export default {
 
       //마커에 클릭이벤트를 등록합니다
       kakao.maps.event.addListener(marker, "click", async (e) => {
+        this.isSideOpen = false;
         this.isHomeSideOpen = true;
         console.log("open");
         this.sideData = {
           address: this.currentAddress,
-          aptName: aptname,
+          aptname: aptname,
           zips: [],
         };
         document.querySelector("#address").innerHTML = this.currentAddress;
@@ -397,6 +398,7 @@ export default {
       // 마커에 클릭이벤트를 등록합니다
       // let regCode = this.regCode;
       kakao.maps.event.addListener(marker, "click", async (e) => {
+        this.isHomeSideOpen = false;
         this.isSideOpen = true;
         document.querySelector("#address").innerHTML = this.currentAddress;
         document.querySelector("#apartment_name").innerHTML = aptName;

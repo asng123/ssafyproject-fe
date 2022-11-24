@@ -1,16 +1,16 @@
 <template>
   <div class="zip_side_container">
-    <div id="zip_side">
-      <div id="zip_side_header">
-        <div id="zip_info">
-          <div id="zip_address">{{ sideData.address }}</div>
-          <div id="zip_apartment_name">{{ sideData.aptname }}</div>
+    <div class="zip_side">
+      <div class="zip_side_header">
+        <div class="zip_info">
+          <div class="zip_address">{{ sideData.address }}</div>
+          <div class="zip_apartment_name">{{ sideData.aptname }}</div>
         </div>
-        <button id="zip_cancle_btn" @click.prevent="clickBtn">
+        <button class="zip_cancle_btn" @click.prevent="clickBtn">
           <font-awesome-icon icon="fa-solid fa-xmark" />
         </button>
       </div>
-      <div>
+      <div class="zip_list_container">
         <zip-thumbnail
           v-for="(zip, index) in sideData.zips"
           :key="index"
@@ -41,7 +41,9 @@ export default {
   data() {
     return {};
   },
-  created() {},
+  created() {
+    console.log(sideData.zips);
+  },
   methods: {
     clickBtn() {
       this.$emit("clickSide");
@@ -70,25 +72,31 @@ export default {
   display: flex;
   flex-direction: column;
   padding: 20px;
+  gap: 10px;
 }
-.zip_side #zip_side_header {
+.zip_side .zip_side_header {
   display: flex;
   width: 100%;
   justify-content: space-between;
   padding: 10px;
 }
-.zip_side #zip_side_header #zip_info {
+.zip_side .zip_side_header .zip_info {
 }
-.zip_side #zip_side_header #zip_info #zip_address {
+.zip_side .zip_side_header .zip_info .zip_address {
   font-size: 15px;
 }
-.zip_side #zip_side_header #zip_info #zip_apartment_name {
+.zip_side .zip_side_header .zip_info .zip_apartment_name {
   font-size: 20px;
 }
-.zip_side #zip_side_header #zip_cancle_btn {
+.zip_side .zip_side_header .zip_cancle_btn {
   width: 30px;
   height: 30px;
   background: 0;
   border: 0;
+}
+.zip_side .zip_list_container {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
 }
 </style>
