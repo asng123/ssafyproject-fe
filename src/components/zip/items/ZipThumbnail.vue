@@ -38,7 +38,7 @@ export default {
     content: String,
     price: Number,
     regcode: String,
-    index: String,
+    index: String | Number,
     lat: String,
     lng: String,
     idx: String,
@@ -60,7 +60,8 @@ export default {
       this.$router.push({ name: "zipdetailview", params: { zid: this.zid } });
     },
     async getImage() {
-      await getImageUrl(this.idx).then(({ data }) => {
+      console.log(this.idx);
+      await getImageUrl(Number(this.idx)).then(({ data }) => {
         console.log(this.idx, data);
         this.imageUrl = data.imageurl.url;
         console.log(this.imageurl, data.imageurl.url);
