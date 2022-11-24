@@ -29,6 +29,7 @@ export default {
       this.$router.push({ name: "question" });
     },
   },
+  watch: {},
 };
 </script>
 

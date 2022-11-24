@@ -2,7 +2,10 @@
   <div id="main" :class="{ usual: isFocus, intro: !isFocus }">
     <div
       id="search_bar"
-      :class="{ focus: isFocus === true, go_right: isSideOpen }"
+      :class="{
+        focus: isFocus === true,
+        go_right: isSideOpen || isHomeSideOpen,
+      }"
     >
       <form action="">
         <b-form-input
@@ -19,29 +22,27 @@
         </button>
       </form>
     </div>
-    <div id="map_div" v-show="isFocus">
-      <div class="side_container" v-show="isSideOpen">
+    <div id="cover" v-if="!isFocus"></div>
+    <div id="map_div">
+      <div class="side_container" v-if="isSideOpen">
         <div class="side">
           <div id="side_header">
             <div id="info">
               <div id="address">하하하하</div>
               <div id="apartment_name">한강메트로자이 2단지</div>
+              <div id="build_year">준공 2022년</div>
             </div>
             <button id="cancle_btn" @click.prevent="clickSide">
               <font-awesome-icon icon="fa-solid fa-xmark" />
             </button>
-          </div>
-          <div id="roadview">
-            <road-view :houseDetailInfos="houseDetailInfos"></road-view>
           </div>
           <div id="chart" v-if="isHouseDetailRendered">
             <trade-chart :houseDetailInfos="houseDetailInfos"></trade-chart>
           </div>
           <div>
             <b-table
-              stacked
+              id="table"
               :items="houseDetailInfos"
-              hover
               :per-page="perPage"
               :current-page="currentPage"
             ></b-table>
@@ -53,6 +54,16 @@
               :per-page="perPage"
               size="sm"
             ></b-pagination>
+          </div>
+          <div id="road">
+            <div class="sub_title">👀 로드뷰로 구경해보세요!</div>
+            <div id="roadview">
+              <road-view
+                :lat="roadview_lat"
+                :lng="roadview_lng"
+                index="sidebar"
+              ></road-view>
+            </div>
           </div>
         </div>
       </div>
@@ -117,9 +128,9 @@ export default {
   name: "HomeView",
   data() {
     return {
+      perPage: 4,
       currCategory: "",
       markers: [],
-      perPage: 1,
       currentPage: 1,
       isFocus: false,
       prevRoute: null,
@@ -146,6 +157,8 @@ export default {
         aptName: "",
         zips: [],
       },
+      roadview_lat: 0,
+      roadview_lng: 0,
     };
   },
   computed: {
@@ -153,17 +166,20 @@ export default {
       return this.houseDetailInfos.length;
     },
   },
-  async created() {},
+  created() {},
   components: {
     TradeChart,
     RoadView,
     ZipSide,
   },
+  mounted() {
+    this.initMap();
+  },
   methods: {
     focused() {
       if (!this.isFocus) {
         this.isFocus = true; // kakao map 초기화
-        this.initMap();
+        // this.initMap();
         // this.findRegCode();
       } else {
       }
@@ -295,18 +311,6 @@ export default {
       console.log("prevAddress", this.currentPrevAddress);
       // this.convertToLatLng("서울특별시 중구 태평로1가 146-1 삼풍");
       await getHouseInfos(this.regCode).then(({ data }) => {
-        // console.log(data.response.body.items.item);
-        // data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
-        //   console.log(지번, 법정동, 아파트);
-        //   지번 = 지번 ? 지번 : " ";
-        //   법정동 = 법정동.trim();
-        //   아파트 = 아파트.trim();
-        //   if (법정동 === this.dong) {
-        //     const place = this.convertToLatLng(
-        //       `${this.currentPrevAddress} ${법정동} ${지번} ${아파트}`,`${아파트}`
-        //     );
-        //   }
-        // });
         console.log("res", data);
         data.forEach(({ aptName, jibun, lat, lng, dongCode }) => {
           aptName = aptName.trim();
@@ -356,23 +360,23 @@ export default {
 
       marker.setMap(this.map);
       // 마커에 표시할 인포윈도우를 생성합니다
-      var infowindow = new kakao.maps.InfoWindow({
-        content: `<div class="infowindow">${aptname}</div>`, // 인포윈도우에 표시할 내용
-      });
-      let $this = this;
+      // var infowindow = new kakao.maps.InfoWindow({
+      //   content: `<div class="infowindow">${aptname}</div>`, // 인포윈도우에 표시할 내용
+      // });
+      // let $this = this;
       // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
       // 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
-      (function (marker, infowindow) {
-        // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
-        kakao.maps.event.addListener(marker, "mouseover", function () {
-          infowindow.open($this.map, marker);
-        });
+      // (function (marker, infowindow) {
+      //   // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
+      //   kakao.maps.event.addListener(marker, "mouseover", function () {
+      //     infowindow.open($this.map, marker);
+      //   });
 
-        // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
-        kakao.maps.event.addListener(marker, "mouseout", function () {
-          infowindow.close();
-        });
-      })(marker, infowindow);
+      //   // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
+      //   kakao.maps.event.addListener(marker, "mouseout", function () {
+      //     infowindow.close();
+      //   });
+      // })(marker, infowindow);
 
       //마커에 클릭이벤트를 등록합니다
       kakao.maps.event.addListener(marker, "click", async (e) => {
@@ -384,8 +388,8 @@ export default {
           aptname: aptname,
           zips: [],
         };
-        document.querySelector("#address").innerHTML = this.currentAddress;
-        document.querySelector("#apartment_name").innerHTML = aptname;
+        document.querySelector(".zip_address").innerHTML = this.currentAddress;
+        document.querySelector(".zip_apartment_name").innerHTML = aptname;
         await getAptZipList(regcode, aptname).then(({ data }) => {
           console.log("side", data.zips);
           this.sideData.zips = data.zips;
@@ -415,31 +419,32 @@ export default {
 
       marker.setMap(this.map);
       // 마커에 표시할 인포윈도우를 생성합니다
-      var infowindow = new kakao.maps.InfoWindow({
-        content: `<div class="infowindow">${aptName}</div>`, // 인포윈도우에 표시할 내용
-      });
+      // var infowindow = new kakao.maps.InfoWindow({
+      //   content: `<div class="infowindow">${aptName}</div>`, // 인포윈도우에 표시할 내용
+      // });
       let $this = this;
       // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
       // 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
-      (function (marker, infowindow) {
-        // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
-        kakao.maps.event.addListener(marker, "mouseover", function () {
-          infowindow.open($this.map, marker);
-        });
+      // (function (marker, infowindow) {
+      //   // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
+      //   kakao.maps.event.addListener(marker, "mouseover", function () {
+      //     infowindow.open($this.map, marker);
+      //   });
 
-        // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
-        kakao.maps.event.addListener(marker, "mouseout", function () {
-          infowindow.close();
-        });
-      })(marker, infowindow);
+      //   // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
+      //   kakao.maps.event.addListener(marker, "mouseout", function () {
+      //     infowindow.close();
+      //   });
+      // })(marker, infowindow);
 
       // 마커에 클릭이벤트를 등록합니다
       // let regCode = this.regCode;
       kakao.maps.event.addListener(marker, "click", async (e) => {
         this.isHomeSideOpen = false;
         this.isSideOpen = true;
-        document.querySelector("#address").innerHTML = this.currentAddress;
-        document.querySelector("#apartment_name").innerHTML = aptName;
+        let by = "2020";
+        this.roadview_lat = lat;
+        this.roadview_lng = lng;
         await getHouseDetailInfos(regcode, aptName).then(({ data }) => {
           this.houseDetailInfos = data.reduce(
             (
@@ -459,22 +464,23 @@ export default {
                 lng,
               }
             ) => {
+              by = buildYear;
               return [
                 ...cur,
                 {
                   층: floor,
                   면적: area,
-                  가격: `${dealAmount}원`,
-                  "준공 년도": `${buildYear}년`,
+                  가격: `${dealAmount}만원`,
                   거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
-                  위도: lat,
-                  경도: lng,
                 },
               ];
             },
             []
           );
           this.isHouseDetailRendered = true;
+          document.querySelector("#address").innerHTML = this.currentAddress;
+          document.querySelector("#apartment_name").innerHTML = aptName;
+          document.querySelector("#build_year").innerHTML = `준공 ${by}년`;
         });
       });
     },
@@ -627,7 +633,6 @@ export default {
       }
     },
   },
-  mounted() {},
   watch: {
     current: function (newCurrent) {
       console.log("watch");
@@ -640,7 +645,7 @@ export default {
 <style lang="scss" scoped>
 #main {
   width: 100%;
-  height: 92vh;
+  height: 92%;
   overflow: hidden;
   background-size: cover;
   background-repeat: no-repeat;
@@ -652,6 +657,26 @@ export default {
   justify-content: center;
 
   position: absolute;
+}
+#main #cover {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 30;
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  background-image: url("https://images.unsplash.com/photo-1486325212027-8081e485255e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
+  display: flex;
+  justify-content: center;
+}
+#main #cover > div {
+  position: absolute;
+  top: 20vh;
+  color: white;
+  font-size: 30px;
 }
 @keyframes searchUp {
   from {
@@ -665,14 +690,13 @@ export default {
   display: flex;
   align-items: center;
   margin-top: 0;
-  background-image: url("https://images.unsplash.com/photo-1486325212027-8081e485255e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
 }
 .focus {
   top: 12vh;
   animation: searchUp 2s;
 }
 .go_right {
-  right: 10vw;
+  right: 15vw;
   transition: right 1s;
 }
 #search_bar {
@@ -751,6 +775,7 @@ export default {
   justify-content: space-between;
   padding: 10px;
 }
+
 .side #side_header #info {
 }
 .side #side_header #info #address {
@@ -759,11 +784,28 @@ export default {
 .side #side_header #info #apartment_name {
   font-size: 20px;
 }
+.side #side_header #info #build_year {
+  font-size: 13px;
+  color: rgb(123, 123, 123);
+}
 .side #side_header #cancle_btn {
   width: 30px;
   height: 30px;
   background: 0;
   border: 0;
+}
+.side #table {
+  height: 300px;
+}
+.side #road {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.side #road .sub_title {
+  font-size: 17px;
+  background-color: $main;
+  padding: 5px 3px;
 }
 #chart {
   padding: 20px;
@@ -911,5 +953,9 @@ export default {
   color: #999;
   font-size: 11px;
   margin-top: 0;
+}
+#roadview {
+  width: 100%;
+  height: 300px;
 }
 </style>

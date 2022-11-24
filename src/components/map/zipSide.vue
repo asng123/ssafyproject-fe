@@ -20,6 +20,7 @@
           :summary="zip.summary"
           :content="zip.content"
           :price="zip.price"
+          :idx="zip.pidx"
           :regcode="zip.regcode"
         >
         </zip-thumbnail>

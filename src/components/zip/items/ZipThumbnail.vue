@@ -2,10 +2,15 @@
   <div class="thumbnail" @click="handleThumbnail">
     <div class="img_container">
       <img
-        src="https://dynaimage.cdn.cnn.com/cnn/q_auto,w_412,c_fill,g_auto,h_412,ar_1:1/http%3A%2F%2Fcdn.cnn.com%2Fcnnnext%2Fdam%2Fassets%2F201231114619-01-oz-ourdomain-student-housing.jpg"
-        alt=""
+        :id="'image' + index"
+        alt="이미지가 없습니다"
         class="thumb_img"
+        :src="imageUrl"
       />
+
+      <!-- <div class="roadview">
+        <road-view :lat="lat" :lng="lng" :index="index"></road-view>
+      </div> -->
     </div>
     <div class="intro_container">
       <div class="info_section">
@@ -20,6 +25,9 @@
 </template>
 
 <script>
+import RoadView from "@/components/roadview/RoadView.vue";
+import { getImageUrl } from "@/api/zip";
+
 export default {
   name: "ZipThumbnail",
   props: {
@@ -30,11 +38,34 @@ export default {
     content: String,
     price: Number,
     regcode: String,
+    index: String | Number,
+    lat: String,
+    lng: String,
+    idx: String,
   },
-  created() {},
+  data() {
+    return {
+      imageUrl: "https://search2.kakaocdn.net/argon/0x200_85_hr/1pLKMrJqZgP",
+    };
+  },
+  components: {
+    RoadView,
+  },
+  created() {
+    this.getImage();
+  },
+  mounted() {},
   methods: {
     handleThumbnail() {
       this.$router.push({ name: "zipdetailview", params: { zid: this.zid } });
+    },
+    async getImage() {
+      console.log(this.idx);
+      await getImageUrl(Number(this.idx)).then(({ data }) => {
+        console.log(this.idx, data);
+        this.imageUrl = data.imageurl.url;
+        console.log(this.imageurl, data.imageurl.url);
+      });
     },
   },
 };
@@ -42,6 +73,7 @@ export default {
 
 <style scoped>
 .thumbnail {
+  height: 300px;
   background: #f8f8f8;
   border-radius: 20px;
   overflow: hidden;
@@ -52,6 +84,10 @@ export default {
 }
 .img_container {
   height: 50%;
+}
+.roadview {
+  width: 100%;
+  height: 100%;
 }
 .img_container .thumb_img {
   width: 100%;

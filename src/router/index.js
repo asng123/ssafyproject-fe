@@ -120,6 +120,11 @@ const routes = [
         component: () => import("@/components/zip/ZipList"),
       },
       {
+        path: "all",
+        name: "zipall",
+        component: () => import("@/components/zip/ZipAllList"),
+      },
+      {
         path: "write",
         name: "zipwrite",
         component: () => import("@/components/zip/ZipWrite"),
