@@ -17,21 +17,24 @@
 
           <b-container class="mt-4">
             <form
-            action="#none"
-            method="post"
-            id="_frmForm"
-            name="frmForm"
-            @submit.prevent="userupdate">
+              action="#none"
+              method="post"
+              id="_frmForm"
+              name="frmForm"
+              @submit.prevent="userupdate"
+            >
               <b-row>
                 <b-col cols="2"></b-col>
                 <b-col cols="2" align-self="end">아이디</b-col
-                ><b-input readonly
+                ><b-input
+                  readonly
                   type="text"
                   v-model="userInfo.uid"
                   id="uid"
-                  ref="userInfo.uid" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="userInfo.uid"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
               <b-row>
@@ -41,9 +44,10 @@
                   type="password"
                   v-model="userInfo.password"
                   id="password"
-                  ref="userInfo.password" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="userInfo.password"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
               <b-row>
@@ -53,9 +57,10 @@
                   type="password"
                   v-model="passwordCheck"
                   id="passwordCheck"
-                  ref="passwordCheck" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="passwordCheck"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
               <b-row>
@@ -65,9 +70,10 @@
                   type="text"
                   v-model="userInfo.username"
                   id="username"
-                  ref="userInfo.username" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="userInfo.username"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
               <b-row>
@@ -77,9 +83,10 @@
                   type="text"
                   v-model="userInfo.nickname"
                   id="nickname"
-                  ref="userInfo.nickname" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="userInfo.nickname"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
               <b-row>
@@ -89,9 +96,10 @@
                   type="text"
                   v-model="userInfo.email"
                   id="email"
-                  ref="userInfo.email" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="userInfo.email"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
               <b-row>
@@ -101,29 +109,36 @@
                   type="text"
                   v-model="userInfo.phonenumber"
                   id="phonenumber"
-                  ref="userInfo.phonenumber" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="userInfo.phonenumber"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
               <b-row>
                 <b-col cols="2"></b-col>
                 <b-col cols="2" align-self="end">가입일</b-col
-                ><b-input readonly
+                ><b-input
+                  readonly
                   type="text"
                   v-model="userInfo.joindate"
                   id="joindate"
-                  ref="userInfo.joindate" 
-                  cols="4" 
-                  align-self="start" ></b-input>
+                  ref="userInfo.joindate"
+                  cols="4"
+                  align-self="start"
+                ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
             </form>
           </b-container>
           <hr class="my-4" />
 
-          <b-button variant="primary" @click.prevent="userupdate" class="mr-1">정보수정</b-button>
-          <b-button variant="danger" @click.prevent="DelMember">회원탈퇴</b-button><span>{{message}}</span>
+          <b-button variant="primary" @click.prevent="userupdate" class="mr-1"
+            >정보수정</b-button
+          >
+          <b-button variant="danger" @click.prevent="DelMember"
+            >회원탈퇴</b-button
+          ><span>{{ message }}</span>
         </b-jumbotron>
       </b-col>
       <b-col></b-col>
@@ -139,11 +154,11 @@ import { del, userupdate } from "@/api/member";
 
 export default {
   name: "UserMyPage",
-  data(){
+  data() {
     return {
-      message:"",
+      message: "",
       passwordCheck: "",
-    }
+    };
   },
   components: {},
   computed: {
@@ -166,15 +181,16 @@ export default {
       if (this.$route.path != "/") this.$router.push({ name: "main" });
     },
     async DelMember() {
-      console.log(this.userInfo);
-      await del(this.userInfo.uid,({data})=>{
-        if(data.message=="success"){
-          this.onClickLogout();
-          this.$router.push({ name: "home" });
-        }else{
-          this.message ="회원 탈퇴에 실패했습니다. 다시 시도해주세요.";
-        }
-      })
+      if (confirm("정말 탈퇴 하시겠습니까? 되돌릴 수 없습니다")) {
+        await del(this.userInfo.uid, ({ data }) => {
+          if (data.message == "success") {
+            this.onClickLogout();
+            this.$router.push({ name: "home" });
+          } else {
+            this.message = "회원 탈퇴에 실패했습니다. 다시 시도해주세요.";
+          }
+        });
+      }
     },
     async userupdate() {
       let myData = {
@@ -186,30 +202,32 @@ export default {
         password: this.userInfo.password,
         joindate: this.userInfo.joindate,
       };
-      if(this.passwordCheck==myData.password){
-        let isUpdated = false;
-        console.log("update start")
-        await userupdate(myData,({data})=>{
-          if(data.message=="success"){
-            console.log("updated")
-            isUpdated = true;
-          }else{
-            console.log("not updated")
-            this.message ="회원 탈퇴에 실패했습니다. 다시 시도해주세요.";
-          }
-        })
-        if(isUpdated){
-            console.log("userInfo start")
+      if (confirm("수정 하시겠습니까?")) {
+        if (this.passwordCheck == myData.password) {
+          let isUpdated = false;
+          console.log("update start");
+          await userupdate(myData, ({ data }) => {
+            if (data.message == "success") {
+              console.log("updated");
+              isUpdated = true;
+            } else {
+              console.log("not updated");
+              this.message = "회원 탈퇴에 실패했습니다. 다시 시도해주세요.";
+            }
+          });
+          if (isUpdated) {
+            console.log("userInfo start");
             let token = sessionStorage.getItem("access-token");
             await this.getUserInfo(token);
-            console.log("userInfo done")
+            console.log("userInfo done");
             this.$router.push({ name: "home" });
+          }
+        } else {
+          alert("비밀번호를 확인해주세요");
         }
-      }else{
-        alert("비밀번호를 확인해주세요");
       }
     },
-  }
+  },
 };
 </script>
 

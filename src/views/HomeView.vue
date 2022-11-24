@@ -31,7 +31,9 @@
               <font-awesome-icon icon="fa-solid fa-xmark" />
             </button>
           </div>
-          <div id="roadview"></div>
+          <div id="roadview">
+            <road-view :houseDetailInfos="houseDetailInfos"></road-view>
+          </div>
           <div id="chart" v-if="isHouseDetailRendered">
             <trade-chart :houseDetailInfos="houseDetailInfos"></trade-chart>
           </div>
@@ -66,6 +68,7 @@ import { getMapInfo, getHouseInfos, getHouseDetailInfos } from "@/api/map";
 import { getAllList } from "@/api/zip";
 import Side from "@/components/map/side.vue";
 import TradeChart from "@/components/chart/TradeChart.vue";
+import RoadView from "@/components/roadview/RoadView.vue";
 import { set } from "vue";
 
 export default {
@@ -101,8 +104,8 @@ export default {
   },
   async created() {},
   components: {
-    siderbar: () => import("@/components/details/sidebar"),
     TradeChart,
+    RoadView,
   },
   methods: {
     focused() {
@@ -280,8 +283,7 @@ export default {
     naezipInfoMarker(aptname, lat, lng) {
       console.log("naezip", aptname, lat, lng);
       let coords = new kakao.maps.LatLng(lat, lng);
-      var imageSrc =
-          "https://cdn-user-icons.flaticon.com/85840/85840519/1669199751289.svg?token=exp=1669200652~hmac=3c09afb51cee3436e27afb52a9851d1c", // 마커이미지의 주소입니다
+      var imageSrc = "https://cdn-icons-png.flaticon.com/512/5385/5385604.png", // 마커이미지의 주소입니다
         imageSize = new kakao.maps.Size(35, 35), // 마커이미지의 크기입니다
         imageOption = { offset: new kakao.maps.Point(10, 30) }; // 마커이미지의 옵션입니다. 마커의 좌표와 일치시킬 이미지 안에서의 좌표를 설정합니다.
 
@@ -419,6 +421,8 @@ export default {
                 floor,
                 jibun,
                 roadName,
+                lat,
+                lng,
               }
             ) => {
               return [
@@ -429,6 +433,8 @@ export default {
                   가격: `${dealAmount}원`,
                   "준공 년도": `${buildYear}년`,
                   거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
+                  위도: lat,
+                  경도: lng,
                 },
               ];
             },
