@@ -27,4 +27,13 @@ async function getDetailZip(zid, success, fail) {
     .then(success)
     .catch(fail);
 }
-export { addZip, addZipBlock, getAllList, getDetailZip };
+
+async function getAptZipList(dong, aptname, success, fail) {
+  console.log("get aptname ", dong, aptname);
+  const params = { dong, aptname };
+  return await api
+    .get("/zip/list", { params: params })
+    .then(success)
+    .catch(fail);
+}
+export { addZip, addZipBlock, getAllList, getDetailZip, getAptZipList };
