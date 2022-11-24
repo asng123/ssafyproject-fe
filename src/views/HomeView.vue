@@ -22,9 +22,7 @@
         </button>
       </form>
     </div>
-    <div id="cover" v-if="!isFocus">
-      <div>내집을 찾아보세요!</div>
-    </div>
+    <div id="cover" v-if="!isFocus"></div>
     <div id="map_div">
       <div class="side_container" v-if="isSideOpen">
         <div class="side">
@@ -469,8 +467,8 @@ export default {
 </script>
 <style lang="scss" scoped>
 #main {
-  width: 100vw;
-  height: 92vh;
+  width: 100%;
+  height: 92%;
   overflow: hidden;
   background-size: cover;
   background-repeat: no-repeat;

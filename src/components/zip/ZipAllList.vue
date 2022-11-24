@@ -2,11 +2,11 @@
   <div id="main">
     <div id="section">
       <div class="container" id="hottest_container">
-        <div class="title">🔥 지금 가장 핫한 내집 🔥</div>
-        <div v-show="hottestZipList.length === 0">{{ message }}</div>
+        <div class="title">✅ 모두 확인해보세요.</div>
+        <div v-show="allZipList.length === 0">{{ message }}</div>
         <div class="thumbs_container">
           <zip-thumbnail
-            v-for="(zip, index) in hottestZipList"
+            v-for="(zip, index) in allZipList"
             :key="index"
             :zid="zip.zid"
             :address="zip.address"
@@ -22,31 +22,6 @@
           >
           </zip-thumbnail>
         </div>
-      </div>
-      <div class="container" id="latest_container">
-        <div class="title">⏱ 방금 올라온 내집 ⏱</div>
-        <div v-show="latestZipList.length === 0">{{ message }}</div>
-        <div class="thumbs_container">
-          <zip-thumbnail
-            v-for="(zip, index) in latestZipList"
-            :key="index"
-            :zid="zip.zid"
-            :address="zip.address"
-            :aptname="zip.aptname"
-            :summary="zip.summary"
-            :content="zip.content"
-            :price="zip.price"
-            :regcode="zip.regcode"
-            :lat="zip.lat"
-            :lng="zip.lng"
-            :index="zip.zid"
-            :idx="zip.pidx"
-          >
-          </zip-thumbnail>
-        </div>
-      </div>
-      <div class="container" id="more_container">
-        <a id="go_all" href="/zip/all">👀 더보기</a>
       </div>
     </div>
   </div>
@@ -55,15 +30,12 @@
 <script>
 import { getAllList } from "@/api/zip";
 import ZipThumbnail from "@/components/zip/items/ZipThumbnail";
-
 export default {
-  name: "ZipList",
+  name: "ZipAll",
   data() {
     return {
       message: "글이 아직 없어요!",
       allZipList: [],
-      hottestZipList: [{}],
-      latestZipList: [],
     };
   },
   components: {
@@ -80,12 +52,6 @@ export default {
             console.log(data.zips);
             this.allZipList = data.zips;
             console.log(this.allZipList);
-            this.hottestZipList = data.zips
-              .sort((a, b) => b.hit - a.hit)
-              .splice(0, 4);
-            this.latestZipList = data.zips
-              .sort((a, b) => a.regtime - b.regtime)
-              .splice(0, 4);
           } else {
             this.message = "불러오는데 에러가 있어요.";
           }
