@@ -2,7 +2,10 @@
   <div id="main" :class="{ usual: isFocus, intro: !isFocus }">
     <div
       id="search_bar"
-      :class="{ focus: isFocus === true, go_right: isSideOpen }"
+      :class="{
+        focus: isFocus === true,
+        go_right: isSideOpen || isHomeSideOpen,
+      }"
     >
       <form action="">
         <b-form-input
@@ -26,6 +29,7 @@
             <div id="info">
               <div id="address">하하하하</div>
               <div id="apartment_name">한강메트로자이 2단지</div>
+              <div id="build_year">준공 2022년</div>
             </div>
             <button id="cancle_btn" @click.prevent="clickSide">
               <font-awesome-icon icon="fa-solid fa-xmark" />
@@ -39,9 +43,8 @@
           </div>
           <div>
             <b-table
-              stacked
+              id="table"
               :items="houseDetailInfos"
-              hover
               :per-page="perPage"
               :current-page="currentPage"
             ></b-table>
@@ -81,7 +84,7 @@ export default {
   name: "HomeView",
   data() {
     return {
-      perPage: 1,
+      perPage: 4,
       currentPage: 1,
       isFocus: false,
       prevRoute: null,
@@ -254,18 +257,6 @@ export default {
       console.log("prevAddress", this.currentPrevAddress);
       // this.convertToLatLng("서울특별시 중구 태평로1가 146-1 삼풍");
       await getHouseInfos(this.regCode).then(({ data }) => {
-        // console.log(data.response.body.items.item);
-        // data.response.body.items.item.forEach(({ 지번, 법정동, 아파트 }) => {
-        //   console.log(지번, 법정동, 아파트);
-        //   지번 = 지번 ? 지번 : " ";
-        //   법정동 = 법정동.trim();
-        //   아파트 = 아파트.trim();
-        //   if (법정동 === this.dong) {
-        //     const place = this.convertToLatLng(
-        //       `${this.currentPrevAddress} ${법정동} ${지번} ${아파트}`,`${아파트}`
-        //     );
-        //   }
-        // });
         console.log("res", data);
         data.forEach(({ aptName, jibun, lat, lng, dongCode }) => {
           aptName = aptName.trim();
@@ -397,8 +388,7 @@ export default {
       kakao.maps.event.addListener(marker, "click", async (e) => {
         this.isHomeSideOpen = false;
         this.isSideOpen = true;
-        document.querySelector("#address").innerHTML = this.currentAddress;
-        document.querySelector("#apartment_name").innerHTML = aptName;
+        let by = "2020";
         await getHouseDetailInfos(regcode, aptName).then(({ data }) => {
           this.houseDetailInfos = data.reduce(
             (
@@ -418,22 +408,23 @@ export default {
                 lng,
               }
             ) => {
+              by = buildYear;
               return [
                 ...cur,
                 {
                   층: floor,
                   면적: area,
-                  가격: `${dealAmount}원`,
-                  "준공 년도": `${buildYear}년`,
+                  가격: `${dealAmount}만원`,
                   거래일: `${dealYear}년 ${dealMonth}월 ${dealDay}일`,
-                  위도: lat,
-                  경도: lng,
                 },
               ];
             },
             []
           );
           this.isHouseDetailRendered = true;
+          document.querySelector("#address").innerHTML = this.currentAddress;
+          document.querySelector("#apartment_name").innerHTML = aptName;
+          document.querySelector("#build_year").innerHTML = `준공 ${by}년`;
         });
       });
     },
@@ -574,6 +565,7 @@ export default {
   justify-content: space-between;
   padding: 10px;
 }
+
 .side #side_header #info {
 }
 .side #side_header #info #address {
@@ -582,11 +574,18 @@ export default {
 .side #side_header #info #apartment_name {
   font-size: 20px;
 }
+.side #side_header #info #build_year {
+  font-size: 13px;
+  color: rgb(123, 123, 123);
+}
 .side #side_header #cancle_btn {
   width: 30px;
   height: 30px;
   background: 0;
   border: 0;
+}
+.side #table {
+  height: 300px;
 }
 #chart {
   padding: 20px;
