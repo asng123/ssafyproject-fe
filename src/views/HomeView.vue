@@ -117,11 +117,8 @@ export default {
   async created() {},
   components: {
     TradeChart,
-<<<<<<< HEAD
     RoadView,
-=======
     ZipSide,
->>>>>>> 6514e31 ([feat] zip side에 데이터 불러오기)
   },
   methods: {
     focused() {
