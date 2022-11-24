@@ -22,7 +22,10 @@
         </button>
       </form>
     </div>
-    <div id="map_div" v-show="isFocus">
+    <div id="cover" v-if="!isFocus">
+      <div>내집을 찾아보세요!</div>
+    </div>
+    <div id="map_div">
       <div class="side_container" v-if="isSideOpen">
         <div class="side">
           <div id="side_header">
@@ -34,13 +37,6 @@
             <button id="cancle_btn" @click.prevent="clickSide">
               <font-awesome-icon icon="fa-solid fa-xmark" />
             </button>
-          </div>
-          <div id="roadview">
-            <road-view
-              :lat="roadview_lat"
-              :lng="roadview_lng"
-              index="sidebar"
-            ></road-view>
           </div>
           <div id="chart" v-if="isHouseDetailRendered">
             <trade-chart :houseDetailInfos="houseDetailInfos"></trade-chart>
@@ -60,6 +56,16 @@
               :per-page="perPage"
               size="sm"
             ></b-pagination>
+          </div>
+          <div id="road">
+            <div class="sub_title">👀 로드뷰로 구경해보세요!</div>
+            <div id="roadview">
+              <road-view
+                :lat="roadview_lat"
+                :lng="roadview_lng"
+                index="sidebar"
+              ></road-view>
+            </div>
           </div>
         </div>
       </div>
@@ -123,17 +129,20 @@ export default {
       return this.houseDetailInfos.length;
     },
   },
-  async created() {},
+  created() {},
   components: {
     TradeChart,
     RoadView,
     ZipSide,
   },
+  mounted() {
+    this.initMap();
+  },
   methods: {
     focused() {
       if (!this.isFocus) {
         this.isFocus = true; // kakao map 초기화
-        this.initMap();
+        // this.initMap();
         // this.findRegCode();
       } else {
       }
@@ -312,23 +321,23 @@ export default {
 
       marker.setMap(this.map);
       // 마커에 표시할 인포윈도우를 생성합니다
-      var infowindow = new kakao.maps.InfoWindow({
-        content: `<div class="infowindow">${aptname}</div>`, // 인포윈도우에 표시할 내용
-      });
-      let $this = this;
+      // var infowindow = new kakao.maps.InfoWindow({
+      //   content: `<div class="infowindow">${aptname}</div>`, // 인포윈도우에 표시할 내용
+      // });
+      // let $this = this;
       // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
       // 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
-      (function (marker, infowindow) {
-        // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
-        kakao.maps.event.addListener(marker, "mouseover", function () {
-          infowindow.open($this.map, marker);
-        });
+      // (function (marker, infowindow) {
+      //   // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
+      //   kakao.maps.event.addListener(marker, "mouseover", function () {
+      //     infowindow.open($this.map, marker);
+      //   });
 
-        // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
-        kakao.maps.event.addListener(marker, "mouseout", function () {
-          infowindow.close();
-        });
-      })(marker, infowindow);
+      //   // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
+      //   kakao.maps.event.addListener(marker, "mouseout", function () {
+      //     infowindow.close();
+      //   });
+      // })(marker, infowindow);
 
       //마커에 클릭이벤트를 등록합니다
       kakao.maps.event.addListener(marker, "click", async (e) => {
@@ -371,23 +380,23 @@ export default {
 
       marker.setMap(this.map);
       // 마커에 표시할 인포윈도우를 생성합니다
-      var infowindow = new kakao.maps.InfoWindow({
-        content: `<div class="infowindow">${aptName}</div>`, // 인포윈도우에 표시할 내용
-      });
+      // var infowindow = new kakao.maps.InfoWindow({
+      //   content: `<div class="infowindow">${aptName}</div>`, // 인포윈도우에 표시할 내용
+      // });
       let $this = this;
       // 마커에 이벤트를 등록하는 함수 만들고 즉시 호출하여 클로저를 만듭니다
       // 클로저를 만들어 주지 않으면 마지막 마커에만 이벤트가 등록됩니다
-      (function (marker, infowindow) {
-        // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
-        kakao.maps.event.addListener(marker, "mouseover", function () {
-          infowindow.open($this.map, marker);
-        });
+      // (function (marker, infowindow) {
+      //   // 마커에 mouseover 이벤트를 등록하고 마우스 오버 시 인포윈도우를 표시합니다
+      //   kakao.maps.event.addListener(marker, "mouseover", function () {
+      //     infowindow.open($this.map, marker);
+      //   });
 
-        // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
-        kakao.maps.event.addListener(marker, "mouseout", function () {
-          infowindow.close();
-        });
-      })(marker, infowindow);
+      //   // 마커에 mouseout 이벤트를 등록하고 마우스 아웃 시 인포윈도우를 닫습니다
+      //   kakao.maps.event.addListener(marker, "mouseout", function () {
+      //     infowindow.close();
+      //   });
+      // })(marker, infowindow);
 
       // 마커에 클릭이벤트를 등록합니다
       // let regCode = this.regCode;
@@ -449,7 +458,6 @@ export default {
       });
     },
   },
-  mounted() {},
   watch: {
     current: function (newCurrent) {
       console.log("watch");
@@ -461,7 +469,7 @@ export default {
 </script>
 <style lang="scss" scoped>
 #main {
-  width: 100%;
+  width: 100vw;
   height: 92vh;
   overflow: hidden;
   background-size: cover;
@@ -475,6 +483,26 @@ export default {
 
   position: absolute;
 }
+#main #cover {
+  width: 100%;
+  height: 100%;
+  background-color: black;
+  z-index: 30;
+  position: absolute;
+  background-size: cover;
+  background-repeat: no-repeat;
+  background-position: center;
+
+  background-image: url("https://images.unsplash.com/photo-1486325212027-8081e485255e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
+  display: flex;
+  justify-content: center;
+}
+#main #cover > div {
+  position: absolute;
+  top: 20vh;
+  color: white;
+  font-size: 30px;
+}
 @keyframes searchUp {
   from {
     top: 50vh;
@@ -487,7 +515,6 @@ export default {
   display: flex;
   align-items: center;
   margin-top: 0;
-  background-image: url("https://images.unsplash.com/photo-1486325212027-8081e485255e?ixlib=rb-4.0.3&ixid=MnwxMjA3fDB8MHxwaG90by1wYWdlfHx8fGVufDB8fHx8&auto=format&fit=crop&w=1170&q=80");
 }
 .focus {
   top: 12vh;
@@ -594,6 +621,16 @@ export default {
 }
 .side #table {
   height: 300px;
+}
+.side #road {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+.side #road .sub_title {
+  font-size: 17px;
+  background-color: $main;
+  padding: 5px 3px;
 }
 #chart {
   padding: 20px;

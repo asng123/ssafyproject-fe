@@ -13,6 +13,7 @@ export default {
   data() {
     return {
       roadviewClient: null,
+      roadview: null,
     };
   },
   created() {},
@@ -35,22 +36,26 @@ export default {
       const roadviewContainer = document.getElementById(
         `roadview${this.index}`
       ); //로드뷰를 표시할 div
-      const roadview = new kakao.maps.Roadview(roadviewContainer); //로드뷰 객체
+      this.roadview = new kakao.maps.Roadview(roadviewContainer); //로드뷰 객체
       this.roadviewClient = new kakao.maps.RoadviewClient(); //좌표로부터 로드뷰 파노ID를 가져올 로드뷰 helper객체
 
       const position = new kakao.maps.LatLng(
         Number(this.lat),
         Number(this.lng)
       );
-
       // 특정 위치의 좌표와 가까운 로드뷰의 panoId를 추출하여 로드뷰를 띄운다.
       this.roadviewClient.getNearestPanoId(position, 100, (panoId) => {
-        console.log("pi", panoId);
+        console.log("pi", panoId, "/", this.lat, this.lng);
         if (panoId == null) {
           return;
         }
-        roadview.setPanoId(panoId, position); //panoId와 중심좌표를 통해 로드뷰 실행
+        this.roadview.setPanoId(panoId, position); //panoId와 중심좌표를 통해 로드뷰 실행
       });
+    },
+  },
+  watch: {
+    lat() {
+      this.makeMap();
     },
   },
 };
