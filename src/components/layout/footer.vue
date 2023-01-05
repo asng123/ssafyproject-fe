@@ -3,13 +3,12 @@
     <div id="nav">
       <div id="left">
         <ul>
-          2
           <li @click.prevent="onClickquestionpage">고객센터</li>
         </ul>
       </div>
       <div id="right">
         <ul>
-          <li>c 내집</li>
+          <li>ⓒ내집</li>
         </ul>
       </div>
     </div>

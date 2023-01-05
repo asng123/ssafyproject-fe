@@ -1,17 +1,14 @@
 <template>
   <b-container class="mt-4" id="mypage" v-if="userInfo">
     <b-row>
-      <b-col>
-        <b-alert variant="secondary" show><h3>내정보</h3></b-alert>
-      </b-col>
-    </b-row>
-    <b-row>
       <b-col></b-col>
       <b-col cols="8">
-        <b-jumbotron>
+        <b-jumbotron
+          bg-variant="white  "
+          text-variant="black"
+          border-variant="white "
+        >
           <template #header>My Page</template>
-
-          <template #lead> 내 정보 확인페이지입니다. </template>
 
           <hr class="my-4" />
 
@@ -24,7 +21,6 @@
               @submit.prevent="userupdate"
             >
               <b-row>
-                <b-col cols="2"></b-col>
                 <b-col cols="2" align-self="end">아이디</b-col
                 ><b-input
                   readonly
@@ -37,9 +33,9 @@
                 ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
+              <hr class="my-5" />
               <b-row>
-                <b-col cols="2"></b-col>
-                <b-col cols="2" align-self="end">패스워드</b-col
+                <b-col align-self="end">패스워드</b-col
                 ><b-input
                   type="password"
                   v-model="userInfo.password"
@@ -50,9 +46,9 @@
                 ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
+              <hr class="my-5" />
               <b-row>
-                <b-col cols="2"></b-col>
-                <b-col cols="2" align-self="end">패스워드 확인</b-col
+                <b-col>패스워드 확인</b-col
                 ><b-input
                   type="password"
                   v-model="passwordCheck"
@@ -63,8 +59,8 @@
                 ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
+              <hr class="my-5" />
               <b-row>
-                <b-col cols="2"></b-col>
                 <b-col cols="2" align-self="end">이름</b-col
                 ><b-input
                   type="text"
@@ -76,8 +72,8 @@
                 ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
+              <hr class="my-5" />
               <b-row>
-                <b-col cols="2"></b-col>
                 <b-col cols="2" align-self="end">닉네임</b-col
                 ><b-input
                   type="text"
@@ -89,8 +85,8 @@
                 ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
+              <hr class="my-5" />
               <b-row>
-                <b-col cols="2"></b-col>
                 <b-col cols="2" align-self="end">이메일</b-col
                 ><b-input
                   type="text"
@@ -102,9 +98,9 @@
                 ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
+              <hr class="my-5" />
               <b-row>
-                <b-col cols="2"></b-col>
-                <b-col cols="2" align-self="end">전화번호</b-col
+                <b-col align-self="end">전화번호</b-col
                 ><b-input
                   type="text"
                   v-model="userInfo.phonenumber"
@@ -115,8 +111,8 @@
                 ></b-input>
                 <b-col cols="2"></b-col>
               </b-row>
+              <hr class="my-5" />
               <b-row>
-                <b-col cols="2"></b-col>
                 <b-col cols="2" align-self="end">가입일</b-col
                 ><b-input
                   readonly
@@ -231,4 +227,15 @@ export default {
 };
 </script>
 
-<style></style>
+<style scoped>
+#aaa {
+  background: white;
+}
+.my-5 {
+  margin-bottom: 0.3rem !important;
+  margin-top: 0.3rem !important;
+}
+.jumbotron {
+  padding: 0rem;
+}
+</style>

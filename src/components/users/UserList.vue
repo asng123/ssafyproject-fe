@@ -28,8 +28,9 @@
           :per-page="perPage"
           align="center"
           aria-controls="tbuser"
-        ></b-pagination
-      ></b-col>
+        ></b-pagination>
+        <p class="mt-3" align="center">현재페이지: {{ currentPage }}</p></b-col
+      >
     </b-row>
   </b-container>
 </template>
@@ -104,8 +105,5 @@ export default {
 }
 #top {
   background: white;
-}
-#tbuser {
-  height: 500px;
 }
 </style>

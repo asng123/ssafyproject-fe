@@ -2,28 +2,32 @@
   <b-container class="bv-example-row mt-3">
     <b-row>
       <b-col>
-        <b-alert show><h3>1:1문의</h3></b-alert>
+        <b-alert show id="top"><h3>1:1문의</h3></b-alert>
       </b-col>
     </b-row>
     <b-row class="mb-1">
       <b-col class="text-right" v-if="userInfo.uid !== `admin`">
-        <b-button variant="outline-primary" @click="moveWrite()">글쓰기</b-button>
+        <b-button variant="outline-primary" @click="moveWrite()"
+          >글쓰기</b-button
+        >
       </b-col>
     </b-row>
     <b-row>
       <b-col>
-        <b-table id="tbquestion" 
-        striped 
-        hover 
-        :items="questions" 
-        :per-page="perPage"
-        :current-page="currentPage"
-        :fields="fields" 
-        align="center"
-        @row-clicked="detailquestion"
+        <b-table
+          id="tbquestion"
+          hover
+          :items="questions"
+          :per-page="perPage"
+          :current-page="currentPage"
+          :fields="fields"
+          align="center"
+          @row-clicked="detailquestion"
         >
           <template #cell(subject)="data">
-            <router-link :to="{ name: 'questionview', params: { qid: data.item.qid } }">
+            <router-link
+              :to="{ name: 'questionview', params: { qid: data.item.qid } }"
+            >
               {{ data.item.subject }}
             </router-link>
           </template>
@@ -56,7 +60,7 @@ export default {
       questions: [],
       fields: [
         { key: "qid", label: "글번호", tdClass: "tdClass" },
-         { key: "uid", label: "작성자", tdClass: "tdClass" },
+        { key: "uid", label: "작성자", tdClass: "tdClass" },
         { key: "subject", label: "제목", tdClass: "tdSubject" },
         { key: "regtime", label: "작성일", tdClass: "tdClass" },
       ],
@@ -90,10 +94,13 @@ export default {
       this.$router.push({ name: "questionwrite" });
     },
     detailquestion(question) {
-      this.$router.push({
-        name: "questionview",
-        params: { qid: question.qid },
-      });
+      console.log("userinfo", this.userInfo);
+      if (this.userInfo.uid === question.uid) {
+        this.$router.push({
+          name: "questionview",
+          params: { qid: question.qid },
+        });
+      }
     },
   },
 };
@@ -107,5 +114,8 @@ export default {
 .tdSubject {
   width: 300px;
   text-align: left;
+}
+#top {
+  background: white;
 }
 </style>

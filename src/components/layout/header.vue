@@ -108,11 +108,11 @@ export default {
 #header {
   width: 100%;
   height: 8vh;
-  padding: 0 3vh;
+  padding: 0 1vh;
   transition: background-color 0.5s;
 
   display: grid;
-  grid-template-columns: 1fr 10fr;
+  grid-template-columns: 0.6fr 9fr;
 
   font-size: 20px;
   line-height: 8vh;
@@ -137,8 +137,7 @@ export default {
   display: flex;
   justify-content: center;
   align-items: center;
-
-  text-align: end;
+  margin-right: 25px;
 }
 ul {
   margin-bottom: 0;
@@ -155,15 +154,16 @@ li {
 }
 #logo {
   width: 100%;
-  height: 100%;
+  height: 95%;
   display: flex;
   justify-content: center;
   align-items: center;
 }
 #logo img {
-  width: 20px;
-  height: 20px;
+  width: 23px;
+  height: 23px;
   object-fit: cover;
+  align-items: center;
 }
 #profile {
   float: left;

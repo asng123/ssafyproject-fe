@@ -827,7 +827,7 @@ export default {
 }
 #category {
   position: absolute;
-  bottom: 40px;
+  bottom: 80px;
   right: 50px;
   border-radius: 5px;
   border: 1px solid #909090;
